@@ -1,4 +1,6 @@
+import { message } from 'antd'
 import axios from 'axios'
+import { hideLoading, showLoading } from './loading'
 
 const instance = axios.create({
   baseURL: '/api',
@@ -7,7 +9,44 @@ const instance = axios.create({
   withCredentials: true
 })
 
-export default {
+// 请求拦截器
+instance.interceptors.request.use(
+  config => {
+    showLoading()
+    const token = localStorage.getItem('token')
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`
+    }
+    return { ...config }
+  },
+  error => {
+    return Promise.reject(error)
+  }
+)
+// 响应拦截器
+instance.interceptors.response.use(
+  response => {
+    hideLoading()
+    if (response.data.code === 500001) {
+      message.error(response.data.msg)
+      localStorage.removeItem('token')
+      window.location.href = '/login'
+      return response.data
+    } else if (response.data.code != 0) {
+      message.error(response.data.msg)
+      return Promise.reject(response.data)
+    }
+  },
+  error => {
+    if (error.response.status === 401) {
+      // 处理未授权错误，例如跳转到登录页
+      window.location.href = '/login'
+    }
+    return Promise.reject(error)
+  }
+)
+
+export const request = {
   get(url: string, params?: any) {
     return instance.get(url, { params })
   },
