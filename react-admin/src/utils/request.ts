@@ -38,6 +38,7 @@ instance.interceptors.response.use(
     }
   },
   error => {
+    hideLoading()
     if (error.response.status === 401) {
       // 处理未授权错误，例如跳转到登录页
       window.location.href = '/login'
@@ -47,16 +48,16 @@ instance.interceptors.response.use(
 )
 
 export const request = {
-  get(url: string, params?: any) {
-    return instance.get(url, { params })
+  get<T>(url: string, params?: object): Promise<T> {
+    return instance.get<T>(url, { params })
   },
-  post(url: string, data?: any) {
-    return instance.post(url, data)
+  post<T>(url: string, data?: object): Promise<T> {
+    return instance.post<T>(url, data)
   },
-  put(url: string, data?: any) {
-    return instance.put(url, data)
+  put<T>(url: string, data?: object): Promise<T> {
+    return instance.put<T>(url, data)
   },
-  delete(url: string, params?: any) {
-    return instance.delete(url, { params })
+  delete<T>(url: string, params?: object): Promise<T> {
+    return instance.delete<T>(url, { params })
   }
 }
