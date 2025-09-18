@@ -5,7 +5,7 @@ export const Welcome: React.FC = () => {
   React.useEffect(() => {
     ;(async function () {
       // showLoading()
-      await request.get('/user/info')
+      await request.get('/test')
     })()
   }, [])
 

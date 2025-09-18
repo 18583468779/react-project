@@ -1,9 +1,10 @@
 import { message } from 'antd'
 import axios from 'axios'
 import { hideLoading, showLoading } from './loading'
+import { getItem, removeItem } from './storage'
 
 const instance = axios.create({
-  baseURL: '/api',
+  baseURL: import.meta.env.VITE_BASE_API,
   timeout: 10000,
   timeoutErrorMessage: '请求超时，请稍后重试',
   withCredentials: true
@@ -13,10 +14,18 @@ const instance = axios.create({
 instance.interceptors.request.use(
   config => {
     showLoading()
-    const token = localStorage.getItem('token')
+    const token = getItem('token')
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`
     }
+    if (import.meta.env.VITE_MOCK_SWITCH) {
+      // mock数据开启
+      config.baseURL = import.meta.env.VITE_MOCK_API
+    } else {
+      // 生产环境
+      config.baseURL = import.meta.env.VITE_BASE_API
+    }
+    console.log(111, config.baseURL) // 'http://localhost:5173'
     return { ...config }
   },
   error => {
@@ -29,7 +38,7 @@ instance.interceptors.response.use(
     hideLoading()
     if (response.data.code === 500001) {
       message.error(response.data.msg)
-      localStorage.removeItem('token')
+      removeItem('token')
       window.location.href = '/login'
       return response.data
     } else if (response.data.code != 0) {
