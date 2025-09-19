@@ -12,6 +12,20 @@ export default [
         }
       }
     }
+  },
+  {
+    url: '/mock/login',
+    method: 'post',
+    timeout: 1000,
+    response: (req: any) => {
+      return {
+        code: 0,
+        data: {
+          token: '123456'
+        },
+        msg: '登录成功'
+      }
+    }
   }
 ] as MockMethod[]
 

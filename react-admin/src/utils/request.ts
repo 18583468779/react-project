@@ -2,6 +2,7 @@ import { message } from 'antd'
 import axios from 'axios'
 import { hideLoading, showLoading } from './loading'
 import { getItem, removeItem } from './storage'
+import type { Result } from '@/types/api'
 
 const instance = axios.create({
   baseURL: import.meta.env.VITE_BASE_API,
@@ -25,7 +26,6 @@ instance.interceptors.request.use(
       // 生产环境
       config.baseURL = import.meta.env.VITE_BASE_API
     }
-    console.log(111, config.baseURL) // '/'
     return { ...config }
   },
   error => {
@@ -36,15 +36,17 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
   response => {
     hideLoading()
-    if (response.data.code === 500001) {
-      message.error(response.data.msg)
+    const res: Result = response.data
+    if (res.code === 500001) {
+      message.error(res.msg)
       removeItem('token')
       window.location.href = '/login'
-      return response.data
-    } else if (response.data.code != 0) {
-      message.error(response.data.msg)
-      return Promise.reject(response.data)
+      return res
+    } else if (res.code != 0) {
+      message.error(res.msg)
+      return Promise.reject(res)
     }
+    return res.data
   },
   error => {
     hideLoading()

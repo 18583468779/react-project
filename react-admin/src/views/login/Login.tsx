@@ -1,17 +1,17 @@
 import * as React from 'react'
 import styles from '@/views/login/index.module.less'
 import type { FormProps } from 'antd'
-import { Button, Checkbox, Form, Input } from 'antd'
-
-type FieldType = {
-  username?: string
-  password?: string
-  remember?: string
-}
+import { LockFilled, UserOutlined } from '@ant-design/icons'
+import { Button, Form, Input, message } from 'antd'
+import { login } from '@/api/api'
+import type { LoginType } from '@/types/api'
+import { setItem } from '@/utils/storage'
 
 export const Login: React.FC = () => {
-  const onFinish: FormProps<FieldType>['onFinish'] = values => {
-    console.log('Success:', values)
+  const onFinish: FormProps<LoginType.params>['onFinish'] = async values => {
+    const res = await login(values)
+    setItem('token', res.token)
+    message.success('登录成功')
   }
 
   return (
@@ -21,12 +21,12 @@ export const Login: React.FC = () => {
           <h4>系统登录</h4>
         </div>
         <Form name='basic' onFinish={onFinish} autoComplete='off'>
-          <Form.Item<FieldType> name='username' rules={[{ required: true, message: 'Please input your username!' }]}>
-            <Input />
+          <Form.Item<LoginType.params> name='username' rules={[{ required: true, message: '请输入用户名' }]}>
+            <Input prefix={<UserOutlined />} placeholder='用户名' />
           </Form.Item>
 
-          <Form.Item<FieldType> name='password' rules={[{ required: true, message: 'Please input your password!' }]}>
-            <Input.Password />
+          <Form.Item<LoginType.params> name='password' rules={[{ required: true, message: '请输入密码' }]}>
+            <Input.Password prefix={<LockFilled />} placeholder='密码' />
           </Form.Item>
 
           <Form.Item label={null}>
