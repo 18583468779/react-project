@@ -18,7 +18,7 @@ export const Login: React.FC = () => {
     <div className={styles.login}>
       <div className={styles.loginWrapper}>
         <div className={styles.title}>
-          <h4>通用后台管理系统</h4>
+          <h4>系统登录</h4>
         </div>
         <Form name='basic' onFinish={onFinish} autoComplete='off'>
           <Form.Item<FieldType> name='username' rules={[{ required: true, message: 'Please input your username!' }]}>
