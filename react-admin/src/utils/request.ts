@@ -18,14 +18,14 @@ instance.interceptors.request.use(
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`
     }
-    if (import.meta.env.VITE_MOCK_SWITCH) {
+    if (import.meta.env.VITE_MOCK_SWITCH === 'true') {
       // mock数据开启
       config.baseURL = import.meta.env.VITE_MOCK_API
     } else {
       // 生产环境
       config.baseURL = import.meta.env.VITE_BASE_API
     }
-    console.log(111, config.baseURL) // 'http://localhost:5173'
+    console.log(111, config.baseURL) // '/'
     return { ...config }
   },
   error => {

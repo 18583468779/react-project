@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 import { viteMockServe } from 'vite-plugin-mock'
+
 // https://vite.dev/config/
 export default defineConfig({
   resolve: {
@@ -10,24 +11,23 @@ export default defineConfig({
     }
   },
   server: {
-    // proxy: {
-    //   '/api': {
-    //     target: 'http://localhost:5173',
-    //     changeOrigin: true, // 改变源地址
-    //     secure: false, // 不验证ssl证书
-    //     rewrite: path => path.replace(/^\/api/, '') // 替换/api为''
-    //   }
-    // }
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5173',
+        changeOrigin: true, // 改变源地址
+        secure: false, // 不验证ssl证书
+        rewrite: path => path.replace(/^\/api/, '') // 替换/api为''
+      }
+    }
   },
   plugins: [
     react(),
     viteMockServe({
-      // 模拟服务开启的开关
       enable: true,
-      localEnabled: true, // 开发环境启用（关键）
-      // mock文件路径
+      localEnabled: true,
       mockPath: './src/mock',
       logger: true
+      // 添加以下配置确保 Mock 服务器正确处理路径
     })
   ]
 })
