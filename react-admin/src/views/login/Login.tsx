@@ -12,17 +12,21 @@ export const Login: React.FC = () => {
   const { message } = App.useApp()
   const [loading, setLoading] = useState(false)
   const onFinish: FormProps<LoginType.params>['onFinish'] = async values => {
-    setLoading(true)
-    const res = await login(values)
-    // const res = await loginError(values)
-    setItem('token', res.token)
-    setLoading(false)
-    const params = new URLSearchParams(window.location.search)
-    const redirect = params.get('redirect') || '/'
-    message.success('登录成功')
-    setTimeout(() => {
-      window.location.href = redirect
-    }, 200)
+    try {
+      setLoading(true)
+      const res = await login(values)
+      // const res = await loginError(values)
+      setItem('token', res.token)
+      setLoading(false)
+      const params = new URLSearchParams(window.location.search)
+      const redirect = params.get('redirect') || '/'
+      message.success('登录成功')
+      setTimeout(() => {
+        window.location.href = redirect
+      }, 200)
+    } catch (error) {
+      setLoading(false)
+    }
   }
 
   return (

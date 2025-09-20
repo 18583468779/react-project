@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Layout, Watermark } from 'antd'
 import NavHeader from '@/components/NavHeader'
 import NavFooter from '@/components/NavFooter'
@@ -6,7 +6,17 @@ import MenuComponent from '@/components/Menu'
 import { Outlet } from 'react-router-dom'
 const { Sider } = Layout
 import styles from './index.module.less'
+import { userInfo } from '@/api/api'
 const App: React.FC = () => {
+  useEffect(() => {
+    handleGetUserInfo()
+  }, [])
+
+  const handleGetUserInfo = async () => {
+    const res = await userInfo()
+    console.log('res', res)
+  }
+
   return (
     <Layout>
       <Sider
