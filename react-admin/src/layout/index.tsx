@@ -7,7 +7,10 @@ import { Outlet } from 'react-router-dom'
 const { Sider } = Layout
 import styles from './index.module.less'
 import { userInfo } from '@/api/api'
+import { userBearStore } from '@/store'
 const App: React.FC = () => {
+  const state = userBearStore()
+
   useEffect(() => {
     handleGetUserInfo()
   }, [])
@@ -15,6 +18,8 @@ const App: React.FC = () => {
   const handleGetUserInfo = async () => {
     const res = await userInfo()
     console.log('res', res)
+    console.log('state', state)
+    state.updateUserInfo(res)
   }
 
   return (

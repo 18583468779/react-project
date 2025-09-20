@@ -3,10 +3,12 @@ import { Breadcrumb, Dropdown, Switch } from 'antd'
 import type { MenuProps } from 'antd'
 import styles from './index.module.less'
 import { useEffect } from 'react'
+import { userBearStore } from '@/store'
 
 const NavHeader = () => {
+  const userInfo = userBearStore(state => state.userInfo)
   const items: MenuProps['items'] = [
-    { key: 'email', label: '邮箱: ' },
+    { key: 'email', label: `邮箱: ${userInfo.userEmail}` },
     { key: 'logout', label: '退出' }
   ]
   const onClick: MenuProps['onClick'] = ({ key }) => {}
@@ -43,7 +45,7 @@ const NavHeader = () => {
       <div className='right'>
         <Switch checkedChildren='暗黑' unCheckedChildren='默认' className='mr-3' onChange={handleSwitch} />
         <Dropdown menu={{ items, onClick }} trigger={['click']}>
-          <span className={styles.nickName}>谢文</span>
+          <span className={styles.nickName}>{userInfo.userName}</span>
         </Dropdown>
       </div>
     </div>
