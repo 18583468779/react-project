@@ -2,16 +2,22 @@ import * as React from 'react'
 import styles from '@/views/login/index.module.less'
 import type { FormProps } from 'antd'
 import { LockFilled, UserOutlined } from '@ant-design/icons'
-import { Button, Form, Input, message } from 'antd'
+import { App, Button, Form, Input } from 'antd'
 import { login } from '@/api/api'
 import type { LoginType } from '@/types/api'
 import { setItem } from '@/utils/storage'
 
 export const Login: React.FC = () => {
+  const { message } = App.useApp()
   const onFinish: FormProps<LoginType.params>['onFinish'] = async values => {
     const res = await login(values)
     setItem('token', res.token)
+    const params = new URLSearchParams(window.location.search)
+    const redirect = params.get('redirect') || '/'
     message.success('登录成功')
+    setTimeout(() => {
+      window.location.href = redirect
+    }, 200)
   }
 
   return (

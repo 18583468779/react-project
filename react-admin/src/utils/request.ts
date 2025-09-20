@@ -1,8 +1,8 @@
-import { message } from 'antd'
 import axios from 'axios'
 import { hideLoading, showLoading } from './loading'
 import { getItem, removeItem } from './storage'
 import type { Result } from '@/types/api'
+import { message } from './antdGlobal'
 
 const instance = axios.create({
   baseURL: import.meta.env.VITE_BASE_API,
