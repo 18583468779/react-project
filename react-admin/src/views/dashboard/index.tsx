@@ -1,9 +1,166 @@
 import * as React from 'react'
-import { Descriptions } from 'antd'
+import { Button, Card, Descriptions, Flex } from 'antd'
 import type { DescriptionsProps } from 'antd'
 import styles from './index.module.less'
+import * as echarts from 'echarts'
 
 export const Dashboard: React.FC = () => {
+  React.useEffect(() => {
+    const chartInstance = echarts.init(document.getElementById('lineChart') as HTMLElement)
+
+    chartInstance.setOption({
+      title: {},
+      grid: {
+        left: 50,
+        top: 50,
+        right: 50,
+        bottom: 50
+      },
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'line'
+        }
+      },
+      legend: {
+        data: ['订单', '流水'],
+        position: 'top',
+        top: 0
+      },
+      xAxis: {
+        data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
+      },
+      yAxis: {
+        type: 'value'
+      },
+      series: [
+        {
+          name: '订单',
+          type: 'line',
+          data: [5, 20, 36, 10, 10, 20, 10, 10, 10, 10, 10, 10]
+        },
+        {
+          name: '流水',
+          type: 'line',
+          data: [15, 20, 16, 12, 15, 21, 11, 15, 16, 18, 12, 10]
+        }
+      ]
+    })
+  }, [])
+
+  React.useEffect(() => {
+    const chartInstance = echarts.init(document.getElementById('pieChartCity') as HTMLElement)
+    chartInstance.setOption({
+      title: {
+        text: '司机城市分布'
+      },
+      grid: {
+        left: 50,
+        top: 50,
+        right: 50,
+        bottom: 50
+      },
+      tooltip: {
+        trigger: 'item',
+        formatter: '{a} <br/>{b} : {c} ({d}%)'
+      },
+      legend: {
+        orient: 'vertical',
+        top: 0,
+        left: 0
+      },
+      series: [
+        {
+          name: '司机城市分布',
+          type: 'pie',
+          radius: '50%',
+          data: [
+            { value: 335, name: '北京' },
+            { value: 310, name: '上海' },
+            { value: 234, name: '广州' },
+            { value: 135, name: '深圳' }
+          ]
+        }
+      ]
+    })
+    const chartInstanceAge = echarts.init(document.getElementById('pieChartAge') as HTMLElement)
+    chartInstanceAge.setOption({
+      title: {
+        text: '司机年龄分布'
+      },
+      grid: {
+        left: 50,
+        top: 50,
+        right: 50,
+        bottom: 50
+      },
+      tooltip: {
+        trigger: 'item',
+        formatter: '{a} <br/>{b} : {c} ({d}%)'
+      },
+      legend: {
+        orient: 'vertical',
+        top: 0,
+        left: 0
+      },
+
+      series: [
+        {
+          name: '司机年龄分布',
+          type: 'pie',
+          radius: ['20%', '70%'],
+          roseType: 'area',
+          data: [
+            { value: 335, name: '20岁以下' },
+            { value: 310, name: '20岁以上' },
+            { value: 234, name: '30岁以上' },
+            { value: 135, name: '40岁以上' },
+            { value: 135, name: '50岁以上' }
+          ]
+        }
+      ]
+    })
+  }, [])
+
+  React.useEffect(() => {
+    const chartInstance = echarts.init(document.getElementById('radarChart') as HTMLElement)
+    chartInstance.setOption({
+      title: {},
+      grid: {
+        left: 50,
+        top: 50,
+        right: 50,
+        bottom: 50
+      },
+      tooltip: {},
+      legend: {
+        data: ['司机模型诊断']
+      },
+      radar: {
+        indicator: [
+          { name: '服务态度', max: 6500 },
+          { name: '在线时长', max: 16000 },
+          { name: '接单率', max: 30000 },
+          { name: '关注度', max: 100000 },
+          { name: '评分', max: 5 }
+        ]
+      },
+
+      series: [
+        {
+          name: '司机模型诊断',
+          type: 'radar',
+          data: [
+            {
+              value: [4300, 10000, 28000, 35000, 3],
+              name: '模型诊断'
+            }
+          ]
+        }
+      ]
+    })
+  }, [])
+
   const items: DescriptionsProps['items'] = [
     {
       key: '1',
@@ -59,6 +216,25 @@ export const Dashboard: React.FC = () => {
           <div className={styles['title']}>岗位总数</div>
           <div className={styles['data']}>10个</div>
         </div>
+      </div>
+      <div className={styles['chart']}>
+        <Card title='订单和流水走势图' extra={<Button type='primary'>刷新</Button>}>
+          <div id='lineChart' className={styles['item-line']}></div>
+        </Card>
+      </div>
+      <div className={styles['chart']}>
+        <Card title='司机分布' extra={<Button type='primary'>刷新</Button>}>
+          <Flex justify='space-between'>
+            <div id='pieChartCity' className={styles['item-line']}></div>
+            <div id='pieChartAge' className={styles['item-line']}></div>
+          </Flex>
+        </Card>
+      </div>
+
+      <div className={styles['chart']}>
+        <Card title='模型诊断' extra={<Button type='primary'>刷新</Button>}>
+          <div id='radarChart' className={styles['item-line']}></div>
+        </Card>
       </div>
     </div>
   )

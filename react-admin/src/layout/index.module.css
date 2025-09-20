@@ -1,5 +1,5 @@
 .content {
-  background-color: var(--dark-home-bg-color);
+  background-color: #f0f2f5;
   padding: 20px;
   overflow: auto;
 }
