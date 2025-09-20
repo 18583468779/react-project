@@ -4,6 +4,7 @@ import { NotFound } from '@/views/404'
 import { Forbidden } from '@/views/403'
 import Layout from '@/layout'
 import Welcome from '@/views/Welcome'
+import { Dashboard } from '@/views/dashboard'
 
 const routes = [
   {
@@ -20,6 +21,10 @@ const routes = [
       {
         path: '/welcome',
         element: <Welcome />
+      },
+      {
+        path: '/dashboard',
+        element: <Dashboard />
       }
     ]
   },
