@@ -1,15 +1,9 @@
 import React from 'react'
-import { UploadOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons'
-import { Layout, Menu, theme } from 'antd'
+import { Layout, theme } from 'antd'
 import NavHeader from '@/components/NavHeader'
-
-const { Header, Content, Footer, Sider } = Layout
-
-const items = [UserOutlined, VideoCameraOutlined, UploadOutlined, UserOutlined].map((icon, index) => ({
-  key: String(index + 1),
-  icon: React.createElement(icon),
-  label: `nav ${index + 1}`
-}))
+import NavFooter from '@/components/NavFooter'
+import MenuComponent from '@/components/Menu'
+const { Content, Sider } = Layout
 
 const App: React.FC = () => {
   const {
@@ -21,6 +15,7 @@ const App: React.FC = () => {
       <Sider
         breakpoint='lg'
         collapsedWidth='0'
+        width={256}
         onBreakpoint={broken => {
           console.log(broken)
         }}
@@ -29,7 +24,7 @@ const App: React.FC = () => {
         }}
       >
         <div className='demo-logo-vertical' />
-        <Menu theme='dark' mode='inline' defaultSelectedKeys={['4']} items={items} />
+        <MenuComponent />
       </Sider>
       <Layout>
         <NavHeader />
@@ -45,7 +40,7 @@ const App: React.FC = () => {
             content
           </div>
         </Content>
-        <Footer style={{ textAlign: 'center' }}>Ant Design ©{new Date().getFullYear()} Created by Ant UED</Footer>
+        <NavFooter />
       </Layout>
     </Layout>
   )
