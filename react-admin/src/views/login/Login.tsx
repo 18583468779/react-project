@@ -20,9 +20,9 @@ export const Login: React.FC = () => {
     const params = new URLSearchParams(window.location.search)
     const redirect = params.get('redirect') || '/'
     message.success('登录成功')
-    // setTimeout(() => {
-    //   window.location.href = redirect
-    // }, 200)
+    setTimeout(() => {
+      window.location.href = redirect
+    }, 200)
   }
 
   return (

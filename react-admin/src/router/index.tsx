@@ -3,15 +3,25 @@ import { Login } from '@/views/login/Login'
 import { NotFound } from '@/views/404'
 import { Welcome } from '@/views/Welcome'
 import { Forbidden } from '@/views/403'
+import Layout from '@/layout'
 
 const routes = [
   {
     path: '/',
-    element: <Welcome />
+    element: <Navigate to='/welcome' />
   },
   {
     path: '/login',
     element: <Login />
+  },
+  {
+    element: <Layout />,
+    children: [
+      {
+        path: '/welcome',
+        element: <Welcome />
+      }
+    ]
   },
   {
     path: '/404',

@@ -71,16 +71,16 @@ interface IConfig {
 }
 
 export const request = {
-  get<T>(url: string, params?: object, config: IConfig = { showLoading: true, showError: true }): Promise<T> {
-    return instance.get<T>(url, { params, ...config })
+  get<T>(url: string, params?: object, config: IConfig = { showLoading: true, showError: true }) {
+    return instance.get<T>(url, { params, ...config }) as Promise<T>
   },
-  post<T>(url: string, data?: object, config: IConfig = { showLoading: true, showError: true }): Promise<T> {
-    return instance.post<T>(url, data, config)
+  post<T>(url: string, data?: object, config: IConfig = { showLoading: true, showError: true }) {
+    return instance.post<T>(url, data, config) as Promise<T>
   },
-  put<T>(url: string, data?: object): Promise<T> {
-    return instance.put<T>(url, data)
+  put<T>(url: string, data?: object) {
+    return instance.put<T>(url, data) as Promise<T>
   },
-  delete<T>(url: string, params?: object): Promise<T> {
-    return instance.delete<T>(url, { params })
+  delete<T>(url: string, params?: object) {
+    return instance.delete<T>(url, { params }) as Promise<T>
   }
 }
