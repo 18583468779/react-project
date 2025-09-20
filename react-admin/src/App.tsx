@@ -15,6 +15,7 @@ function App() {
         }}
       >
         <AppAntd>
+          {/*  全局antd组件  */}
           <AntdGlobal />
           <RouterProvider router={router} />
         </AppAntd>

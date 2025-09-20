@@ -26,6 +26,18 @@ export default [
         msg: '登录成功'
       }
     }
+  },
+  {
+    url: '/mock/loginError',
+    method: 'post',
+    timeout: 1000,
+    response: (req: any) => {
+      return {
+        code: 1,
+        data: null,
+        msg: '登录失败'
+      }
+    }
   }
 ] as MockMethod[]
 
