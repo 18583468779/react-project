@@ -1,9 +1,9 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { Login } from '@/views/login/Login'
 import { NotFound } from '@/views/404'
-import { Welcome } from '@/views/Welcome'
 import { Forbidden } from '@/views/403'
 import Layout from '@/layout'
+import Welcome from '@/views/Welcome'
 
 const routes = [
   {

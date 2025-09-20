@@ -4,7 +4,7 @@
   align-items: center;
   height: 50px;
   padding: 0 20px;
-  background-color: var(--dark-bg-color);
+  background-color: #fff;
   color: var(--dark-color);
 }
 .left {

@@ -1,15 +1,12 @@
 import React from 'react'
-import { Layout, theme } from 'antd'
+import { Layout, Watermark } from 'antd'
 import NavHeader from '@/components/NavHeader'
 import NavFooter from '@/components/NavFooter'
 import MenuComponent from '@/components/Menu'
-const { Content, Sider } = Layout
-
+import { Outlet } from 'react-router-dom'
+const { Sider } = Layout
+import styles from './index.module.less'
 const App: React.FC = () => {
-  const {
-    token: { colorBgContainer, borderRadiusLG }
-  } = theme.useToken()
-
   return (
     <Layout>
       <Sider
@@ -28,18 +25,14 @@ const App: React.FC = () => {
       </Sider>
       <Layout>
         <NavHeader />
-        <Content style={{ margin: '24px 16px 0' }}>
-          <div
-            style={{
-              padding: 24,
-              minHeight: 360,
-              background: colorBgContainer,
-              borderRadius: borderRadiusLG
-            }}
-          >
-            content
+        <Watermark content='React'>
+          <div className={styles.content}>
+            <div className={styles.wrapper}>
+              <Outlet></Outlet>
+            </div>
           </div>
-        </Content>
+        </Watermark>
+
         <NavFooter />
       </Layout>
     </Layout>
