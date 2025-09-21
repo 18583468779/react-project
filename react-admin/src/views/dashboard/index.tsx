@@ -174,6 +174,11 @@ export const Dashboard: React.FC = () => {
     })
   }
 
+  const handleRefresh = () => {
+    renderPieChart1()
+    renderPieChart2()
+  }
+
   React.useEffect(() => {
     handleGetReportData()
   }, [])
@@ -241,12 +246,26 @@ export const Dashboard: React.FC = () => {
         </div>
       </div>
       <div className={styles['chart']}>
-        <Card title='订单和流水走势图' extra={<Button type='primary'>刷新</Button>}>
+        <Card
+          title='订单和流水走势图'
+          extra={
+            <Button type='primary' onClick={renderLineChart}>
+              刷新
+            </Button>
+          }
+        >
           <div ref={lineRef} className={styles['item-line']}></div>
         </Card>
       </div>
       <div className={styles['chart']}>
-        <Card title='司机分布' extra={<Button type='primary'>刷新</Button>}>
+        <Card
+          title='司机分布'
+          extra={
+            <Button type='primary' onClick={handleRefresh}>
+              刷新
+            </Button>
+          }
+        >
           <Flex justify='space-between'>
             <div ref={pieRef1} className={styles['item-line']}></div>
             <div ref={pieRef2} className={styles['item-line']}></div>
@@ -255,7 +274,14 @@ export const Dashboard: React.FC = () => {
       </div>
 
       <div className={styles['chart']}>
-        <Card title='模型诊断' extra={<Button type='primary'>刷新</Button>}>
+        <Card
+          title='模型诊断'
+          extra={
+            <Button type='primary' onClick={renderRadarChart}>
+              刷新
+            </Button>
+          }
+        >
           <div ref={radarRef} className={styles['item-line']}></div>
         </Card>
       </div>

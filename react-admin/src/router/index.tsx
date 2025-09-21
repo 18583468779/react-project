@@ -5,6 +5,7 @@ import { Forbidden } from '@/views/403'
 import Layout from '@/layout'
 import Welcome from '@/views/Welcome'
 import { Dashboard } from '@/views/dashboard'
+import UserList from '@/views/system/user'
 
 const routes = [
   {
@@ -25,6 +26,10 @@ const routes = [
       {
         path: '/dashboard',
         element: <Dashboard />
+      },
+      {
+        path: '/system/user',
+        element: <UserList />
       }
     ]
   },
