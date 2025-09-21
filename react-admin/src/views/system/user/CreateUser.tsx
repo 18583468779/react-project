@@ -1,7 +1,41 @@
-import { Form, Input, InputNumber, Modal, Select } from 'antd'
+import { message } from '@/utils/antdGlobal'
+import { getItem } from '@/utils/storage'
+import { LoadingOutlined, PlusOutlined } from '@ant-design/icons'
+import { Form, Input, Modal, Select, Upload } from 'antd'
+import type { RcFile, UploadChangeParam, UploadFile, UploadProps } from 'antd/es/upload'
 import * as React from 'react'
+import { useState } from 'react'
 export const CreateUser: React.FC = () => {
   const [form] = Form.useForm()
+  const [img, setImg] = useState('')
+  const [loading, setLoading] = useState(false)
+  // 上传前接口处理
+  const beforeUpload = (file: RcFile) => {
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
+    if (!isJpgOrPng) {
+      message.error('上传图片格式错误，请上传jpg/png格式图片')
+      return false
+    }
+    const isLt2M = file.size / 1024 / 1024 < 2
+    if (!isLt2M) {
+      message.error('上传图片大小不能超过2MB')
+      return false
+    }
+    return true
+  }
+
+  // 上传后，图片处理
+  const handleOnchange: UploadProps['onChange'] = (info: UploadChangeParam<UploadFile>) => {
+    if (info.file.status === 'uploading') {
+      setLoading(true)
+      return
+    }
+    if (info.file.status === 'done') {
+      setImg(info.file.url || '')
+      setLoading(false)
+    }
+  }
+
   const handleSubmit = async () => {
     const values = await form.validateFields()
     console.log(values)
@@ -54,6 +88,26 @@ export const CreateUser: React.FC = () => {
             <Select.Option value={2}>离职</Select.Option>
             <Select.Option value={3}>试用期</Select.Option>
           </Select>
+        </Form.Item>
+        <Form.Item label='用户头像'>
+          <Upload
+            listType='picture-card'
+            showUploadList={false}
+            headers={{
+              Authorization: 'Bearer ' + getItem('token')
+            }}
+            action={'/mock/system/user/upload'}
+            beforeUpload={beforeUpload}
+            onChange={handleOnchange}
+          >
+            {img && <img src={img} alt='avatar' style={{ width: '100%' }} />}
+            {!img && (
+              <div>
+                {loading ? <LoadingOutlined /> : <PlusOutlined />}
+                <div style={{ marginTop: 5 }}>上传头像</div>
+              </div>
+            )}
+          </Upload>
         </Form.Item>
       </Form>
     </Modal>

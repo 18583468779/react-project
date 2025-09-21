@@ -1,5 +1,12 @@
 import type { MockMethod } from 'vite-plugin-mock'
-
+import fs from 'fs'
+import path from 'path'
+import { v4 as uuidv4 } from 'uuid'
+// 确保上传目录存在
+const uploadDir = path.join(__dirname, 'uploads')
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true })
+}
 export default [
   {
     url: '/mock/test',
@@ -316,6 +323,46 @@ export default [
           }
         },
         msg: '获取用户列表成功'
+      }
+    }
+  },
+  {
+    url: '/mock/system/user/upload',
+    method: 'post',
+    response: async (req: any, res: any) => {
+      try {
+        // 在实际环境中，这里会解析multipart/form-data获取文件内容
+        // 这里我们模拟文件信息
+        console.log('req', req.body)
+        const fileExt = req.body.fileName ? req.body.fileName.split('.').pop() : 'png'
+        const fileName = `${uuidv4()}.${fileExt}`
+        const filePath = path.join(uploadDir, fileName)
+
+        // 模拟写入文件到当前目录下的uploads文件夹
+        // 实际场景中应该是从req.file.buffer获取文件内容
+        const mockFileContent = Buffer.from('mock image content', 'utf8')
+        fs.writeFileSync(filePath, mockFileContent)
+
+        // 生成可访问的URL（相对路径）
+        const fileUrl = `/uploads/${fileName}`
+
+        return {
+          code: 0,
+          data: {
+            url: fileUrl,
+            filePath: filePath, // 本地绝对路径
+            fileName: fileName,
+            fileSize: mockFileContent.length,
+            message: `文件已保存到: ${filePath}`
+          },
+          msg: '上传成功，文件已保存到本地目录'
+        }
+      } catch (error: any) {
+        return {
+          code: 500,
+          data: null,
+          msg: `上传失败: ${error.message}`
+        }
       }
     }
   }
