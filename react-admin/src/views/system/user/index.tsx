@@ -4,6 +4,7 @@ import type { PageParams, User } from '@/types/api'
 import { Button, Table, Form, Input, Select, Space, Modal } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useEffect, useState } from 'react'
+import { CreateUser } from './CreateUser'
 
 export default function UserList() {
   const [data, setData] = useState<User.UserItem[]>([])
@@ -167,6 +168,7 @@ export default function UserList() {
           columns={columns}
           dataSource={data}
         />
+        <CreateUser />
       </div>
     </div>
   )
