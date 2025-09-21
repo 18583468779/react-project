@@ -8,15 +8,17 @@ import { formatMoney, formatNum, formatState } from '@/utils'
 import { getReportData } from '@/api/api'
 import type { Dashboard as DashboardType } from '@/types/api'
 import { useState } from 'react'
+import { useCharts } from '@/hook/useCharts'
 
 export const Dashboard: React.FC = () => {
   const userInfo = userStore(state => state.userInfo)
   const [reportData, setReportData] = useState<DashboardType.ReportData>()
-
+  const [lineRef, lineChart] = useCharts()
+  const [pieRef1, pieChart1] = useCharts()
+  const [pieRef2, pieChart2] = useCharts()
+  const [radarRef, radarChart] = useCharts()
   React.useEffect(() => {
-    const chartInstance = echarts.init(document.getElementById('lineChart') as HTMLElement)
-
-    chartInstance.setOption({
+    lineChart?.setOption({
       title: {},
       grid: {
         left: 50,
@@ -54,11 +56,7 @@ export const Dashboard: React.FC = () => {
         }
       ]
     })
-  }, [])
-
-  React.useEffect(() => {
-    const chartInstance = echarts.init(document.getElementById('pieChartCity') as HTMLElement)
-    chartInstance.setOption({
+    pieChart1?.setOption({
       title: {
         text: '司机城市分布'
       },
@@ -91,8 +89,7 @@ export const Dashboard: React.FC = () => {
         }
       ]
     })
-    const chartInstanceAge = echarts.init(document.getElementById('pieChartAge') as HTMLElement)
-    chartInstanceAge.setOption({
+    pieChart2?.setOption({
       title: {
         text: '司机年龄分布'
       },
@@ -128,11 +125,7 @@ export const Dashboard: React.FC = () => {
         }
       ]
     })
-  }, [])
-
-  React.useEffect(() => {
-    const chartInstance = echarts.init(document.getElementById('radarChart') as HTMLElement)
-    chartInstance.setOption({
+    radarChart?.setOption({
       title: {},
       grid: {
         left: 50,
@@ -153,7 +146,6 @@ export const Dashboard: React.FC = () => {
           { name: '评分', max: 5 }
         ]
       },
-
       series: [
         {
           name: '司机模型诊断',
@@ -167,7 +159,7 @@ export const Dashboard: React.FC = () => {
         }
       ]
     })
-  }, [])
+  }, [lineChart, pieChart1, pieChart2, radarChart])
 
   React.useEffect(() => {
     handleGetReportData()
@@ -236,21 +228,21 @@ export const Dashboard: React.FC = () => {
       </div>
       <div className={styles['chart']}>
         <Card title='订单和流水走势图' extra={<Button type='primary'>刷新</Button>}>
-          <div id='lineChart' className={styles['item-line']}></div>
+          <div ref={lineRef} className={styles['item-line']}></div>
         </Card>
       </div>
       <div className={styles['chart']}>
         <Card title='司机分布' extra={<Button type='primary'>刷新</Button>}>
           <Flex justify='space-between'>
-            <div id='pieChartCity' className={styles['item-line']}></div>
-            <div id='pieChartAge' className={styles['item-line']}></div>
+            <div ref={pieRef1} className={styles['item-line']}></div>
+            <div ref={pieRef2} className={styles['item-line']}></div>
           </Flex>
         </Card>
       </div>
 
       <div className={styles['chart']}>
         <Card title='模型诊断' extra={<Button type='primary'>刷新</Button>}>
-          <div id='radarChart' className={styles['item-line']}></div>
+          <div ref={radarRef} className={styles['item-line']}></div>
         </Card>
       </div>
     </div>
