@@ -17,3 +17,18 @@ export const userInfo = () => {
 export const getReportData = () => {
   return request.post<Dashboard.ReportData>('/dashboard/reportData', {})
 }
+// 获取工作台折线图数据
+export const getLineData = () => {
+  return request.post<Dashboard.LineData>('/dashboard/lineData', {})
+}
+// 获取工作台饼图数据
+export const getPieData = () => {
+  return request.post<Dashboard.PieData[]>('/dashboard/pieData', {})
+}
+export const getPieData2 = () => {
+  return request.post<Dashboard.PieData[]>('/dashboard/pieData2', {})
+}
+// 获取工作台雷达图数据
+export const getRadarData = () => {
+  return request.post<Dashboard.RadarData>('/dashboard/radarData', {})
+}

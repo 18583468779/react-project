@@ -88,6 +88,90 @@ export default [
         msg: '获取工作台报表汇总数据成功'
       }
     }
+  },
+  {
+    url: '/mock/dashboard/lineData',
+    method: 'post',
+    response: (res: any) => {
+      return {
+        code: 0,
+        data: {
+          label: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+          order: [100, 200, 300, 400, 500, 600, 700],
+          money: [1000, 2000, 3000, 4000, 5000, 6000, 7000]
+        },
+        msg: '获取工作台折线图数据成功'
+      }
+    }
+  },
+  {
+    url: '/mock/dashboard/pieData',
+    method: 'post',
+    response: (res: any) => {
+      return {
+        code: 0,
+        data: [
+          {
+            value: 100,
+            name: '订单'
+          },
+          {
+            value: 200,
+            name: '用户'
+          },
+          {
+            value: 300,
+            name: '司机'
+          }
+        ],
+        msg: '获取工作台饼图数据成功'
+      }
+    }
+  },
+  {
+    url: '/mock/dashboard/pieData2',
+    method: 'post',
+    response: (res: any) => {
+      return {
+        code: 0,
+        data: [
+          {
+            value: 100,
+            name: '订单'
+          },
+          {
+            value: 200,
+            name: '用户'
+          },
+          {
+            value: 300,
+            name: '司机'
+          }
+        ],
+        msg: '获取工作台饼图数据2成功'
+      }
+    }
+  },
+  {
+    url: '/mock/dashboard/radarData',
+    method: 'post',
+    response: (res: any) => {
+      return {
+        code: 0,
+        data: {
+          indicator: [
+            { name: '订单', max: 10000 },
+            { name: '用户', max: 10000 },
+            { name: '司机', max: 10000 }
+          ],
+          data: {
+            name: '当前',
+            value: [1020, 3200, 8300]
+          }
+        },
+        msg: '获取工作台雷达图数据成功'
+      }
+    }
   }
 ] as MockMethod[]
 

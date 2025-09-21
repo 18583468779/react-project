@@ -5,7 +5,7 @@ import styles from './index.module.less'
 import * as echarts from 'echarts'
 import { userStore } from '@/store'
 import { formatMoney, formatNum, formatState } from '@/utils'
-import { getReportData } from '@/api/api'
+import { getLineData, getPieData, getPieData2, getRadarData, getReportData } from '@/api/api'
 import type { Dashboard as DashboardType } from '@/types/api'
 import { useState } from 'react'
 import { useCharts } from '@/hook/useCharts'
@@ -18,6 +18,17 @@ export const Dashboard: React.FC = () => {
   const [pieRef2, pieChart2] = useCharts()
   const [radarRef, radarChart] = useCharts()
   React.useEffect(() => {
+    renderLineChart()
+    renderPieChart1()
+    renderPieChart2()
+    renderRadarChart()
+  }, [lineChart, pieChart1, pieChart2, radarChart])
+
+  const renderLineChart = async () => {
+    const data = await getLineData()
+    if (!data) {
+      return
+    }
     lineChart?.setOption({
       title: {},
       grid: {
@@ -38,7 +49,7 @@ export const Dashboard: React.FC = () => {
         top: 0
       },
       xAxis: {
-        data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
+        data: data?.label || []
       },
       yAxis: {
         type: 'value'
@@ -47,15 +58,22 @@ export const Dashboard: React.FC = () => {
         {
           name: '订单',
           type: 'line',
-          data: [5, 20, 36, 10, 10, 20, 10, 10, 10, 10, 10, 10]
+          data: data?.order || []
         },
         {
           name: '流水',
           type: 'line',
-          data: [15, 20, 16, 12, 15, 21, 11, 15, 16, 18, 12, 10]
+          data: data?.money || []
         }
       ]
     })
+  }
+
+  const renderPieChart1 = async () => {
+    const res = await getPieData()
+    if (!res) {
+      return
+    }
     pieChart1?.setOption({
       title: {
         text: '司机城市分布'
@@ -80,15 +98,16 @@ export const Dashboard: React.FC = () => {
           name: '司机城市分布',
           type: 'pie',
           radius: '50%',
-          data: [
-            { value: 335, name: '北京' },
-            { value: 310, name: '上海' },
-            { value: 234, name: '广州' },
-            { value: 135, name: '深圳' }
-          ]
+          data: res || []
         }
       ]
     })
+  }
+  const renderPieChart2 = async () => {
+    const data = await getPieData2()
+    if (!data) {
+      return
+    }
     pieChart2?.setOption({
       title: {
         text: '司机年龄分布'
@@ -108,23 +127,23 @@ export const Dashboard: React.FC = () => {
         top: 0,
         left: 0
       },
-
       series: [
         {
           name: '司机年龄分布',
           type: 'pie',
           radius: ['20%', '70%'],
           roseType: 'area',
-          data: [
-            { value: 335, name: '20岁以下' },
-            { value: 310, name: '20岁以上' },
-            { value: 234, name: '30岁以上' },
-            { value: 135, name: '40岁以上' },
-            { value: 135, name: '50岁以上' }
-          ]
+          data: data || []
         }
       ]
     })
+  }
+
+  const renderRadarChart = async () => {
+    const data = await getRadarData()
+    if (!data) {
+      return
+    }
     radarChart?.setOption({
       title: {},
       grid: {
@@ -138,13 +157,7 @@ export const Dashboard: React.FC = () => {
         data: ['司机模型诊断']
       },
       radar: {
-        indicator: [
-          { name: '服务态度', max: 6500 },
-          { name: '在线时长', max: 16000 },
-          { name: '接单率', max: 30000 },
-          { name: '关注度', max: 100000 },
-          { name: '评分', max: 5 }
-        ]
+        indicator: data?.indicator || []
       },
       series: [
         {
@@ -152,19 +165,20 @@ export const Dashboard: React.FC = () => {
           type: 'radar',
           data: [
             {
-              value: [4300, 10000, 28000, 35000, 3],
+              value: data?.data.value || [],
               name: '模型诊断'
             }
           ]
         }
       ]
     })
-  }, [lineChart, pieChart1, pieChart2, radarChart])
+  }
 
   React.useEffect(() => {
     handleGetReportData()
   }, [])
 
+  // 获取工作台报表汇总数据
   const handleGetReportData = async () => {
     const res = await getReportData()
     setReportData(res)
