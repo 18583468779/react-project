@@ -1,9 +1,48 @@
 // 第三方库
-import type { User } from '@/types/api'
+import { getUserList } from '@/api/api'
+import type { PageParams, User } from '@/types/api'
 import { Button, Table, Form, Input, Select, Space, Modal } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
+import { useEffect, useState } from 'react'
 
 export default function UserList() {
+  const [data, setData] = useState<User.UserItem[]>([])
+  const [form] = Form.useForm()
+  const [total, setTotal] = useState<number>(0)
+  const [pagination, setPagination] = useState<PageParams>({
+    pageNum: 1,
+    pageSize: 10
+  })
+
+  useEffect(() => {
+    handleGetUserList({
+      pageNum: 1,
+      pageSize: pagination.pageSize
+    })
+  }, [pagination.pageSize, pagination.pageNum])
+
+  const handleGetUserList = async (params: PageParams) => {
+    const values = form.getFieldsValue()
+    const res = await getUserList({ ...values, pageNum: params.pageNum, pageSize: params.pageSize })
+    setData(res.list)
+    setTotal(res.page.total)
+    setPagination({
+      ...pagination,
+      pageNum: res.page.pageNum,
+      pageSize: res.page.pageSize
+    })
+  }
+
+  const handleSearch = () => {
+    handleGetUserList({
+      pageNum: 1,
+      pageSize: pagination.pageSize
+    })
+  }
+
+  const handleReset = () => {
+    form.resetFields()
+  }
   const columns: ColumnsType<User.UserItem> = [
     {
       title: '用户ID',
@@ -65,36 +104,9 @@ export default function UserList() {
     }
   ]
 
-  const data = [
-    {
-      key: '1',
-      name: 'John Brown',
-      age: 32,
-      address: 'New York No. 1 Lake Park'
-    },
-    {
-      key: '2',
-      name: 'Jim Green',
-      age: 42,
-      address: 'London No. 1 Lake Park'
-    },
-    {
-      key: '3',
-      name: 'Joe Black',
-      age: 32,
-      address: 'Sydney No. 1 Lake Park'
-    },
-    {
-      key: '4',
-      name: 'Disabled User',
-      age: 99,
-      address: 'Sydney No. 1 Lake Park'
-    }
-  ]
-
   return (
     <div className='user-list'>
-      <Form className='search-form' layout='inline'>
+      <Form className='search-form' layout='inline' form={form}>
         <Form.Item name='userId' label='用户ID'>
           <Input placeholder='请输入用户ID' />
         </Form.Item>
@@ -111,8 +123,12 @@ export default function UserList() {
         </Form.Item>
         <Form.Item>
           <Space>
-            <Button type='primary'>搜索</Button>
-            <Button type='default'>重置</Button>
+            <Button type='primary' onClick={() => handleSearch()}>
+              搜索
+            </Button>
+            <Button type='default' onClick={() => handleReset()}>
+              重置
+            </Button>
           </Space>
         </Form.Item>
       </Form>
@@ -126,7 +142,31 @@ export default function UserList() {
             </Button>
           </div>
         </div>
-        <Table columns={columns} dataSource={data} />
+        <Table
+          bordered
+          rowSelection={{
+            type: 'checkbox'
+          }}
+          pagination={{
+            current: pagination.pageNum,
+            pageSize: pagination.pageSize,
+            total,
+            showQuickJumper: true,
+            showSizeChanger: true,
+            showTotal(total) {
+              return `总共：${total} 条`
+            },
+            onChange: (pageNum, pageSize) =>
+              setPagination({
+                ...pagination,
+                pageNum,
+                pageSize
+              })
+          }}
+          rowKey='userId'
+          columns={columns}
+          dataSource={data}
+        />
       </div>
     </div>
   )

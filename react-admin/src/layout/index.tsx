@@ -17,8 +17,6 @@ const App: React.FC = () => {
 
   const handleGetUserInfo = async () => {
     const res = await userInfo()
-    console.log('res', res)
-    console.log('state', state)
     state.updateUserInfo(res)
   }
 
@@ -28,9 +26,7 @@ const App: React.FC = () => {
         breakpoint='lg'
         collapsedWidth='0'
         width={256}
-        onBreakpoint={broken => {
-          console.log(broken)
-        }}
+        onBreakpoint={broken => {}}
         onCollapse={(collapsed, type) => {
           console.log(collapsed, type)
         }}

@@ -5,6 +5,19 @@ export interface Result<T = any> {
   msg: string
 }
 
+export interface ResultData<T = any> {
+  list: T[]
+  page: {
+    pageNum: number
+    pageSize: number
+    total: number
+  }
+}
+export interface PageParams {
+  pageNum: number
+  pageSize?: number
+}
+
 export namespace LoginType {
   export interface params {
     username: string
@@ -12,6 +25,11 @@ export namespace LoginType {
   }
 }
 export namespace User {
+  export interface params extends PageParams {
+    userId?: number
+    userName?: string
+    state?: number
+  }
   export interface UserItem {
     _id: string
     userId: number

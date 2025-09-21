@@ -1,5 +1,5 @@
 import { request } from '@/utils/request'
-import type { Dashboard, LoginType, Result, User } from '@/types/api'
+import type { Dashboard, LoginType, Result, ResultData, User } from '@/types/api'
 
 export const login = (params: LoginType.params) => {
   return request.post<{ token: string }>('/login', params, { showLoading: false, showError: true })
@@ -31,4 +31,9 @@ export const getPieData2 = () => {
 // 获取工作台雷达图数据
 export const getRadarData = () => {
   return request.post<Dashboard.RadarData>('/dashboard/radarData', {})
+}
+
+// 获取用户列表
+export const getUserList = (params?: User.params) => {
+  return request.post<ResultData<User.UserItem>>('/user/list', params)
 }
