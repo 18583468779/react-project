@@ -3,13 +3,19 @@ import { getUserList } from '@/api/api'
 import type { PageParams, User } from '@/types/api'
 import { Button, Table, Form, Input, Select, Space, Modal } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { CreateUser } from './CreateUser'
+import type { IAction } from '@/types/modal'
 
 export default function UserList() {
   const [data, setData] = useState<User.UserItem[]>([])
   const [form] = Form.useForm()
   const [total, setTotal] = useState<number>(0)
+  const userRef = useRef<{
+    open: (type: IAction, data?: User.UserItem) => void
+  }>({
+    open: () => {}
+  })
   const [pagination, setPagination] = useState<PageParams>({
     pageNum: 1,
     pageSize: 10
@@ -43,6 +49,11 @@ export default function UserList() {
 
   const handleReset = () => {
     form.resetFields()
+  }
+
+  // 打开弹窗
+  const handleOpenModal = () => {
+    userRef.current.open('create')
   }
   const columns: ColumnsType<User.UserItem> = [
     {
@@ -137,7 +148,9 @@ export default function UserList() {
         <div className='header-wrapper'>
           <div className='title'>用户列表</div>
           <div className='action'>
-            <Button type='primary'>新增</Button>
+            <Button type='primary' onClick={() => handleOpenModal()}>
+              新增
+            </Button>
             <Button type='primary' danger>
               批量删除
             </Button>
@@ -168,7 +181,15 @@ export default function UserList() {
           columns={columns}
           dataSource={data}
         />
-        <CreateUser />
+        <CreateUser
+          mRef={userRef}
+          update={() => {
+            handleGetUserList({
+              pageNum: 1,
+              pageSize: pagination.pageSize
+            })
+          }}
+        />
       </div>
     </div>
   )

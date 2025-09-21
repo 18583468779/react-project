@@ -1,3 +1,5 @@
+import type { User } from '@/types/api'
+import type { IAction, IModalProp } from '@/types/modal'
 import { message } from '@/utils/antdGlobal'
 import { getItem } from '@/utils/storage'
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons'
@@ -5,10 +7,25 @@ import { Form, Input, Modal, Select, Upload } from 'antd'
 import type { RcFile, UploadChangeParam, UploadFile, UploadProps } from 'antd/es/upload'
 import * as React from 'react'
 import { useState } from 'react'
-export const CreateUser: React.FC = () => {
+
+export const CreateUser: React.FC<IModalProp> = props => {
   const [form] = Form.useForm()
   const [img, setImg] = useState('')
   const [loading, setLoading] = useState(false)
+  const [visible, setVisible] = useState(false)
+  const [action, setAction] = useState<IAction>('create')
+  // 暴露子组件open方法
+  React.useImperativeHandle(props.mRef, () => {
+    return {
+      open
+    }
+  })
+  //调用弹框显示方法
+  const open = (type: IAction, data?: User.UserItem) => {
+    setAction(type)
+    setVisible(true)
+  }
+
   // 上传前接口处理
   const beforeUpload = (file: RcFile) => {
     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
@@ -45,7 +62,7 @@ export const CreateUser: React.FC = () => {
     <Modal
       title='创建用户'
       width={800}
-      open={true}
+      open={visible}
       onOk={handleSubmit}
       onCancel={handleCancel}
       okText='确定'
