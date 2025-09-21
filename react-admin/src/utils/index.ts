@@ -12,6 +12,19 @@ export const formatMoney = (num: number | string) => {
 }
 
 /**
+ *
+ * 格式化数字
+ * @param num 数字或字符串类型的数字
+ * @returns 格式化后的数字字符串
+ */
+export const formatNum = (num?: number | string) => {
+  if (!num) return 0
+  const a = num.toString()
+  if (a.indexOf('.') > -1) return a.replace(/(\d)(?=(\d{3})+\.)/g, '$1,')
+  return a.replace(/(\d)(?=(\d{3})+$)/g, '$1,')
+}
+
+/**
  * 格式化日期为本地日期字符串
  * @param date 日期对象
  * @returns 格式化后的本地日期字符串
@@ -26,4 +39,11 @@ export const toLocalDate = (date?: Date, rule?: string) => {
     return curDate.toLocaleTimeString('zh-CN')
   }
   return curDate.toLocaleString('zh-CN').replace(/\//g, '-')
+}
+
+// 用户状态转换
+export const formatState = (state: number) => {
+  if (state === 1) return '在职'
+  if (state === 2) return '试用期'
+  if (state === 3) return '离职'
 }

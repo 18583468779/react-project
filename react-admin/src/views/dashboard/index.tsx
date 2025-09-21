@@ -3,8 +3,16 @@ import { Button, Card, Descriptions, Flex } from 'antd'
 import type { DescriptionsProps } from 'antd'
 import styles from './index.module.less'
 import * as echarts from 'echarts'
+import { userStore } from '@/store'
+import { formatMoney, formatNum, formatState } from '@/utils'
+import { getReportData } from '@/api/api'
+import type { Dashboard as DashboardType } from '@/types/api'
+import { useState } from 'react'
 
 export const Dashboard: React.FC = () => {
+  const userInfo = userStore(state => state.userInfo)
+  const [reportData, setReportData] = useState<DashboardType.ReportData>()
+
   React.useEffect(() => {
     const chartInstance = echarts.init(document.getElementById('lineChart') as HTMLElement)
 
@@ -161,31 +169,40 @@ export const Dashboard: React.FC = () => {
     })
   }, [])
 
+  React.useEffect(() => {
+    handleGetReportData()
+  }, [])
+
+  const handleGetReportData = async () => {
+    const res = await getReportData()
+    setReportData(res)
+  }
+
   const items: DescriptionsProps['items'] = [
     {
       key: '1',
       label: '用户ID',
-      children: 'Zhou Maomao'
+      children: userInfo?.userId || 'empty'
     },
     {
       key: '2',
       label: '邮箱',
-      children: '1810000000'
+      children: userInfo?.userEmail || 'empty'
     },
     {
       key: '3',
       label: '状态',
-      children: 'Hangzhou, Zhejiang'
+      children: formatState(userInfo?.state || 0) || 'empty'
     },
     {
       key: '4',
       label: '手机号',
-      children: 'empty'
+      children: userInfo?.mobile || 'empty'
     },
     {
       key: '5',
       label: '岗位',
-      children: 'No. 18, Wantang Road, Xihu District, Hangzhou, Zhejiang, China'
+      children: userInfo?.job || 'empty'
     }
   ]
 
@@ -193,28 +210,28 @@ export const Dashboard: React.FC = () => {
     <div className={styles['dashboard-wrapper']}>
       <div className={styles['user-info']}>
         <img
-          src='https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png'
+          src={userInfo?.userImg || 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png'}
           alt='avatar'
           className={styles['userImg']}
         />
-        <Descriptions title='欢迎新同学，每天都要开心！' items={items} />
+        <Descriptions title={`欢迎${userInfo?.userName || '新同学'}，每天都要开心！`} items={items} />
       </div>
       <div className={styles['report']}>
         <div className={styles['card']}>
           <div className={styles['title']}>用户总数</div>
-          <div className={styles['data']}>100个</div>
+          <div className={styles['data']}>{formatNum(reportData?.driverCount || 0)} 个</div>
         </div>
         <div className={styles['card']}>
           <div className={styles['title']}>总流水</div>
-          <div className={styles['data']}>10个</div>
+          <div className={styles['data']}>{formatMoney(reportData?.totalMoney || 0)}</div>
         </div>
         <div className={styles['card']}>
-          <div className={styles['title']}>岗位总数</div>
-          <div className={styles['data']}>10个</div>
+          <div className={styles['title']}>总订单数</div>
+          <div className={styles['data']}>{formatNum(reportData?.orderCount || 0)} 单</div>
         </div>
         <div className={styles['card']}>
-          <div className={styles['title']}>岗位总数</div>
-          <div className={styles['data']}>10个</div>
+          <div className={styles['title']}>开通城市</div>
+          <div className={styles['data']}>{formatNum(reportData?.cityNum || 0)} 座</div>
         </div>
       </div>
       <div className={styles['chart']}>

@@ -4,6 +4,7 @@ import type { MenuProps, MenuTheme } from 'antd'
 import { Menu, Switch } from 'antd'
 import styles from './index.module.less'
 import { useNavigate } from 'react-router-dom'
+import { userStore } from '@/store'
 type MenuItem = Required<MenuProps>['items'][number]
 
 const items: MenuItem[] = [
@@ -21,6 +22,7 @@ const items: MenuItem[] = [
 ]
 
 const App: React.FC = () => {
+  const collapsed = userStore(state => state.collapsed)
   const [theme, setTheme] = useState<MenuTheme>('dark')
   const [current, setCurrent] = useState('1')
   const navigate = useNavigate()
@@ -49,6 +51,7 @@ const App: React.FC = () => {
       <Menu
         theme={theme}
         onClick={onClick}
+        inlineCollapsed={collapsed}
         style={{ width: 256 }}
         defaultOpenKeys={['sub1']}
         selectedKeys={[current]}

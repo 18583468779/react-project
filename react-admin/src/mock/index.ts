@@ -67,9 +67,25 @@ export default [
           roleList: '1,2',
           createId: 1,
           deptName: '开发部',
-          userImg: 'https://example.com/avatar.jpg'
+          userImg: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png'
         },
         msg: '获取用户信息成功'
+      }
+    }
+  },
+  {
+    url: '/mock/dashboard/reportData',
+    method: 'post',
+    response: (res: any) => {
+      return {
+        code: 0,
+        data: {
+          driverCount: 312300,
+          totalMoney: 1120000,
+          orderCount: 1100420,
+          cityNum: 1022
+        },
+        msg: '获取工作台报表汇总数据成功'
       }
     }
   }

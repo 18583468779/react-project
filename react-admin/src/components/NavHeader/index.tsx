@@ -3,10 +3,12 @@ import { Breadcrumb, Dropdown, Switch } from 'antd'
 import type { MenuProps } from 'antd'
 import styles from './index.module.less'
 import { useEffect } from 'react'
-import { userBearStore } from '@/store'
+import { userStore } from '@/store'
 
 const NavHeader = () => {
-  const userInfo = userBearStore(state => state.userInfo)
+  const userInfo = userStore(state => state.userInfo)
+  const collapsed = userStore(state => state.collapsed)
+  const updateCollapsed = userStore(state => state.updateCollapsed)
   const items: MenuProps['items'] = [
     { key: 'email', label: `邮箱: ${userInfo.userEmail}` },
     { key: 'logout', label: '退出' }
@@ -14,7 +16,9 @@ const NavHeader = () => {
   const onClick: MenuProps['onClick'] = ({ key }) => {}
 
   // 控制菜单关闭和展开
-  const toggleCollapsed = () => {}
+  const toggleCollapsed = () => {
+    updateCollapsed()
+  }
 
   useEffect(() => {}, [])
 
@@ -23,7 +27,7 @@ const NavHeader = () => {
   return (
     <div className={styles.navHeader}>
       <div className={styles.left}>
-        <div onClick={toggleCollapsed}>{<MenuUnfoldOutlined />}</div>
+        <div onClick={toggleCollapsed}>{collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}</div>
         <Breadcrumb
           style={{ marginLeft: 10 }}
           items={[

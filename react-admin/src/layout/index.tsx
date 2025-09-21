@@ -7,9 +7,9 @@ import { Outlet } from 'react-router-dom'
 const { Sider } = Layout
 import styles from './index.module.less'
 import { userInfo } from '@/api/api'
-import { userBearStore } from '@/store'
+import { userStore } from '@/store'
 const App: React.FC = () => {
-  const state = userBearStore()
+  const state = userStore()
 
   useEffect(() => {
     handleGetUserInfo()
