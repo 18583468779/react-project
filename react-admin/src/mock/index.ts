@@ -459,6 +459,28 @@ export default [
         }
       }
     }
+  },
+  {
+    url: '/mock/user/delete',
+    method: 'post',
+    response: (req: any) => {
+      try {
+        const { ids } = req.body
+        // 过滤出不在ids中的用户
+        userDatabase = userDatabase.filter(user => !ids.includes(user.userId))
+        return {
+          code: 0,
+          data: { ids },
+          msg: '删除用户成功'
+        }
+      } catch (error: any) {
+        return {
+          code: 500,
+          data: null,
+          msg: `删除用户失败: ${error.message}`
+        }
+      }
+    }
   }
 ] as MockMethod[]
 

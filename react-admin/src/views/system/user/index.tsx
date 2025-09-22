@@ -1,7 +1,7 @@
 // 第三方库
-import { getUserList } from '@/api/api'
+import { deleteUser, getUserList } from '@/api/api'
 import type { PageParams, User } from '@/types/api'
-import { Button, Table, Form, Input, Select, Space, Modal } from 'antd'
+import { Button, Table, Form, Input, Select, Space, Modal, message, Popconfirm } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useEffect, useRef, useState } from 'react'
 import { CreateUser } from './CreateUser'
@@ -11,6 +11,7 @@ export default function UserList() {
   const [data, setData] = useState<User.UserItem[]>([])
   const [form] = Form.useForm()
   const [total, setTotal] = useState<number>(0)
+  const [userIds, setUserIds] = useState<string[]>([])
   const userRef = useRef<{
     open: (type: IAction, data?: User.UserItem) => void
   }>({
@@ -49,6 +50,29 @@ export default function UserList() {
 
   const handleReset = () => {
     form.resetFields()
+  }
+  // 删除用户
+  const handleDelete = async (record: User.UserItem) => {
+    await deleteUser({ ids: [record.userId] })
+    handleGetUserList({
+      pageNum: pagination.pageNum,
+      pageSize: pagination.pageSize
+    })
+    message.success('删除成功')
+  }
+  // 批量删除
+  const handlePatchDelete = async () => {
+    if (userIds.length === 0) {
+      message.error('请选择要删除的用户')
+      return
+    }
+    await deleteUser({ ids: userIds })
+    handleGetUserList({
+      pageNum: pagination.pageNum,
+      pageSize: pagination.pageSize
+    })
+    setUserIds([])
+    message.success('删除成功')
   }
 
   // 打开弹窗
@@ -109,9 +133,11 @@ export default function UserList() {
             <Button type='text' onClick={() => userRef.current.open('update', record)}>
               编辑
             </Button>
-            <Button type='text' danger>
-              删除
-            </Button>
+            <Popconfirm okText='删除' cancelText='取消' title='确认删除吗？' onConfirm={() => handleDelete(record)}>
+              <Button type='text' danger>
+                删除
+              </Button>
+            </Popconfirm>
           </Space>
         )
       }
@@ -153,7 +179,7 @@ export default function UserList() {
             <Button type='primary' onClick={() => handleOpenModal()}>
               新增
             </Button>
-            <Button type='primary' danger>
+            <Button type='primary' danger disabled={userIds.length === 0} onClick={() => handlePatchDelete()}>
               批量删除
             </Button>
           </div>
@@ -161,7 +187,10 @@ export default function UserList() {
         <Table
           bordered
           rowSelection={{
-            type: 'checkbox'
+            type: 'checkbox',
+            onChange(selectedRowKeys) {
+              setUserIds(selectedRowKeys as string[])
+            }
           }}
           pagination={{
             current: pagination.pageNum,

@@ -40,10 +40,15 @@ export const getUserList = (params?: User.params) => {
 
 // 创建用户
 export const createUser = (params: User.UserItem) => {
-  return request.post<ResultData<User.UserItem>>('/user/create', params)
+  return request.post<User.UserItem>('/user/create', params)
 }
 
 // 更新用户
 export const updateUser = (params: User.UserItem) => {
-  return request.post<ResultData<User.UserItem>>('/user/update', params)
+  return request.post<User.UserItem>('/user/update', params)
+}
+
+// 批量删除
+export const deleteUser = (params: { ids: Array<string | number> }) => {
+  return request.post<User.UserItem>('/user/delete', params)
 }
