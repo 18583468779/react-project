@@ -75,6 +75,8 @@ export const CreateUser: React.FC<IModalProp> = props => {
   }
   const handleCancel = () => {
     setVisible(false)
+    form.resetFields()
+    setImg('')
   }
   return (
     <Modal
@@ -90,13 +92,27 @@ export const CreateUser: React.FC<IModalProp> = props => {
         <Form.Item name='userId' hidden>
           <Input></Input>
         </Form.Item>
-        <Form.Item name='userName' label='用户名称' rules={[{ required: true, message: '请输入用户名称' }]}>
+        <Form.Item
+          name='userName'
+          label='用户名称'
+          rules={[
+            { required: true, message: '请输入用户名称' },
+            { min: 2, max: 10, message: '长度在 2 到 10 个字符' }
+          ]}
+        >
           <Input placeholder='请输入用户名称' />
         </Form.Item>
-        <Form.Item name='userEmail' label='用户邮箱' rules={[{ required: true, message: '请输入用户邮箱' }]}>
-          <Input placeholder='请输入用户邮箱' />
+        <Form.Item
+          name='userEmail'
+          label='用户邮箱'
+          rules={[
+            { required: true, message: '请输入用户邮箱' },
+            { type: 'email', message: '请输入正确的邮箱格式' }
+          ]}
+        >
+          <Input placeholder='请输入用户邮箱' disabled={action === IActionData.Update} />
         </Form.Item>
-        <Form.Item name='mobile' label='手机号'>
+        <Form.Item name='mobile' label='手机号' rules={[{ len: 11, message: '请输入正确的手机号格式' }]}>
           <Input type='number' placeholder='请输入手机号' />
         </Form.Item>
         <Form.Item name='deptId' label='部门' rules={[{ required: true, message: '请选择部门' }]}>

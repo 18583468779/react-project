@@ -43,8 +43,7 @@ export default function UserList() {
 
   const handleSearch = () => {
     handleGetUserList({
-      pageNum: 1,
-      pageSize: pagination.pageSize
+      pageNum: 1
     })
   }
 
@@ -55,8 +54,7 @@ export default function UserList() {
   const handleDelete = async (record: User.UserItem) => {
     await deleteUser({ ids: [record.userId] })
     handleGetUserList({
-      pageNum: pagination.pageNum,
-      pageSize: pagination.pageSize
+      pageNum: pagination.pageNum
     })
     message.success('删除成功')
   }
@@ -68,8 +66,7 @@ export default function UserList() {
     }
     await deleteUser({ ids: userIds })
     handleGetUserList({
-      pageNum: pagination.pageNum,
-      pageSize: pagination.pageSize
+      pageNum: pagination.pageNum
     })
     setUserIds([])
     message.success('删除成功')
