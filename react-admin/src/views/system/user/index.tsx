@@ -106,7 +106,9 @@ export default function UserList() {
       render(record, values) {
         return (
           <Space>
-            <Button type='text'>编辑</Button>
+            <Button type='text' onClick={() => userRef.current.open('update', record)}>
+              编辑
+            </Button>
             <Button type='text' danger>
               删除
             </Button>

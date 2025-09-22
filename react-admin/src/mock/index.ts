@@ -2,11 +2,120 @@ import type { MockMethod } from 'vite-plugin-mock'
 import fs from 'fs'
 import path from 'path'
 import { v4 as uuidv4 } from 'uuid'
+
 // 确保上传目录存在
 const uploadDir = path.join(__dirname, 'uploads')
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true })
 }
+
+// 全局用户数据存储
+let userDatabase: any = []
+
+// 生成随机用户数据
+const generateRandomUser = (id: number) => {
+  const departments = ['开发部', '产品部', '设计部', '测试部', '市场部', '人事部', '财务部']
+  const jobs = ['前端开发', '后端开发', '产品经理', 'UI设计', '测试工程师', '市场专员', '人事专员', '财务专员']
+  const roles = [1, 2, 3, 4] // 不同角色ID
+
+  // 随机生成中文姓名
+  const familyNames = ['张', '王', '李', '赵', '刘', '陈', '杨', '黄', '周', '吴', '徐', '孙', '胡', '朱', '高']
+  const givenNames = [
+    '伟',
+    '芳',
+    '娜',
+    '秀英',
+    '敏',
+    '静',
+    '强',
+    '磊',
+    '军',
+    '洋',
+    '勇',
+    '艳',
+    '杰',
+    '涛',
+    '明',
+    '华',
+    '慧',
+    '丽',
+    '桂',
+    '红'
+  ]
+  const familyName = familyNames[Math.floor(Math.random() * familyNames.length)]
+  const givenName = givenNames[Math.floor(Math.random() * givenNames.length)]
+  const fullName = familyName + givenName
+
+  // 随机生成状态(0:禁用, 1:正常)
+  const userState = Math.random() > 0.1 ? 1 : 0 // 10%概率禁用
+
+  // 随机选择部门和职位
+  const deptIndex = Math.floor(Math.random() * departments.length)
+  const jobIndex = Math.floor(Math.random() * jobs.length)
+
+  // 随机生成手机号
+  const mobilePrefix = [
+    '138',
+    '139',
+    '130',
+    '131',
+    '132',
+    '133',
+    '134',
+    '135',
+    '136',
+    '137',
+    '186',
+    '189',
+    '185',
+    '177',
+    '155'
+  ]
+  const prefix = mobilePrefix[Math.floor(Math.random() * mobilePrefix.length)]
+  const suffix = Math.floor(Math.random() * 100000000)
+    .toString()
+    .padStart(8, '0')
+  const mobile = prefix + suffix
+
+  // 随机生成角色列表
+  const userRoles = [
+    ...new Set(
+      [
+        roles[Math.floor(Math.random() * roles.length)],
+        Math.random() > 0.5 ? roles[Math.floor(Math.random() * roles.length)] : null
+      ].filter(Boolean)
+    )
+  ]
+
+  return {
+    _id: id.toString(),
+    userId: id,
+    userName: fullName,
+    userEmail: `${fullName.toLowerCase()}${id}@example.com`,
+    deptId: (deptIndex + 1).toString(),
+    state: userState,
+    mobile: mobile,
+    job: jobs[jobIndex],
+    role: userRoles[0],
+    roleList: userRoles.join(','),
+    createId: Math.floor(Math.random() * 10) + 1,
+    deptName: departments[deptIndex],
+    userImg: `https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ${id % 5}.png`
+  }
+}
+
+// 初始化20条用户数据
+const initializeUsers = () => {
+  if (userDatabase.length === 0) {
+    for (let i = 1; i <= 20; i++) {
+      userDatabase.push(generateRandomUser(i))
+    }
+  }
+}
+
+// 初始化用户数据
+initializeUsers()
+
 export default [
   {
     url: '/mock/test',
@@ -194,123 +303,30 @@ export default [
         }
       }
 
-      // 获取请求参数
-      const { userId, userName, state, pageNum = 1, pageSize = 10 } = res.body
+      // 获取请求参数，默认页大小设为20
+      const { userId, userName, state, pageNum = 1, pageSize = 20 } = res.body
 
-      // 生成随机用户数量(10-100)
-      const totalUsers = Math.floor(Math.random() * 91) + 10
-
-      // 生成随机用户数据
-      const generateRandomUsers = (count: number) => {
-        const users = []
-        const departments = ['开发部', '产品部', '设计部', '测试部', '市场部', '人事部', '财务部']
-        const jobs = ['前端开发', '后端开发', '产品经理', 'UI设计', '测试工程师', '市场专员', '人事专员', '财务专员']
-        const roles = [1, 2, 3, 4] // 不同角色ID
-
-        for (let i = 1; i <= count; i++) {
-          // 随机生成中文姓名
-          const familyNames = ['张', '王', '李', '赵', '刘', '陈', '杨', '黄', '周', '吴', '徐', '孙', '胡', '朱', '高']
-          const givenNames = [
-            '伟',
-            '芳',
-            '娜',
-            '秀英',
-            '敏',
-            '静',
-            '强',
-            '磊',
-            '军',
-            '洋',
-            '勇',
-            '艳',
-            '杰',
-            '涛',
-            '明'
-          ]
-          const familyName = familyNames[Math.floor(Math.random() * familyNames.length)]
-          const givenName = givenNames[Math.floor(Math.random() * givenNames.length)]
-          const fullName = familyName + givenName
-
-          // 随机生成状态(0:禁用, 1:正常)
-          const userState = Math.random() > 0.1 ? 1 : 0 // 10%概率禁用
-
-          // 随机选择部门和职位
-          const deptIndex = Math.floor(Math.random() * departments.length)
-          const jobIndex = Math.floor(Math.random() * jobs.length)
-
-          // 随机生成手机号
-          const mobilePrefix = [
-            '138',
-            '139',
-            '130',
-            '131',
-            '132',
-            '133',
-            '134',
-            '135',
-            '136',
-            '137',
-            '186',
-            '189',
-            '185'
-          ]
-          const prefix = mobilePrefix[Math.floor(Math.random() * mobilePrefix.length)]
-          const suffix = Math.floor(Math.random() * 100000000)
-            .toString()
-            .padStart(8, '0')
-          const mobile = prefix + suffix
-
-          // 随机生成角色列表
-          const userRoles = [
-            ...new Set(
-              [
-                roles[Math.floor(Math.random() * roles.length)],
-                Math.random() > 0.5 ? roles[Math.floor(Math.random() * roles.length)] : null
-              ].filter(Boolean)
-            )
-          ]
-
-          users.push({
-            _id: i.toString(),
-            userId: i,
-            userName: fullName,
-            userEmail: `${fullName.toLowerCase()}${i}@example.com`,
-            deptId: (deptIndex + 1).toString(),
-            state: userState,
-            mobile: mobile,
-            job: jobs[jobIndex],
-            role: userRoles[0],
-            roleList: userRoles.join(','),
-            createId: Math.floor(Math.random() * 10) + 1,
-            deptName: departments[deptIndex],
-            userImg: `https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ${i % 5}.png`
-          })
-        }
-
-        return users
-      }
-
-      // 生成所有用户
-      let allUsers = generateRandomUsers(totalUsers)
+      // 从全局数据库获取并筛选用户
+      let filteredUsers = [...userDatabase]
 
       // 根据参数筛选
       if (userId) {
-        allUsers = allUsers.filter(user => user.userId === userId)
+        filteredUsers = filteredUsers.filter(user => user.userId === userId)
       }
 
       if (userName) {
-        allUsers = allUsers.filter(user => user.userName.includes(userName))
+        filteredUsers = filteredUsers.filter(user => user.userName.includes(userName))
       }
 
       if (state !== undefined) {
-        allUsers = allUsers.filter(user => user.state === state)
+        filteredUsers = filteredUsers.filter(user => user.state === state)
       }
 
       // 计算分页
-      const total = allUsers.length
+      const total = filteredUsers.length
       const startIndex = (pageNum - 1) * pageSize
       const endIndex = startIndex + pageSize
-      const paginatedList = allUsers.slice(startIndex, endIndex)
+      const paginatedList = filteredUsers.slice(startIndex, endIndex)
 
       return {
         code: 0,
@@ -362,6 +378,84 @@ export default [
           code: 500,
           data: null,
           msg: `上传失败: ${error.message}`
+        }
+      }
+    }
+  },
+  {
+    url: '/mock/user/create',
+    method: 'post',
+    response: (req: any) => {
+      try {
+        const newUser = req.body
+
+        // 生成新的用户ID（确保唯一）
+        const maxId = userDatabase.reduce((max, user) => Math.max(max, user.userId), 0)
+        const newUserId = maxId + 1
+
+        // 补充必要的用户信息
+        const userToAdd = {
+          ...newUser,
+          _id: newUserId.toString(),
+          userId: newUserId,
+          // 如果没有提供头像，使用默认头像
+          userImg:
+            newUser.userImg ||
+            `https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ${newUserId % 5}.png`
+        }
+
+        // 添加到全局数据库
+        userDatabase.push(userToAdd)
+
+        return {
+          code: 0,
+          data: userToAdd,
+          msg: '创建用户成功'
+        }
+      } catch (error: any) {
+        return {
+          code: 500,
+          data: null,
+          msg: `创建用户失败: ${error.message}`
+        }
+      }
+    }
+  },
+  {
+    url: '/mock/user/update',
+    method: 'post',
+    response: (req: any) => {
+      try {
+        const updatedUser = req.body
+        const userId = updatedUser.userId
+
+        // 查找用户在数据库中的索引
+        const userIndex = userDatabase.findIndex(user => user.userId === userId)
+
+        if (userIndex === -1) {
+          return {
+            code: 404,
+            data: null,
+            msg: `未找到ID为${userId}的用户`
+          }
+        }
+
+        // 更新用户信息
+        userDatabase[userIndex] = {
+          ...userDatabase[userIndex],
+          ...updatedUser
+        }
+
+        return {
+          code: 0,
+          data: userDatabase[userIndex],
+          msg: '更新用户成功'
+        }
+      } catch (error: any) {
+        return {
+          code: 500,
+          data: null,
+          msg: `更新用户失败: ${error.message}`
         }
       }
     }

@@ -1,5 +1,6 @@
+import { createUser, updateUser } from '@/api/api'
 import type { User } from '@/types/api'
-import type { IAction, IModalProp } from '@/types/modal'
+import { IActionData, type IAction, type IModalProp } from '@/types/modal'
 import { message } from '@/utils/antdGlobal'
 import { getItem } from '@/utils/storage'
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons'
@@ -24,6 +25,9 @@ export const CreateUser: React.FC<IModalProp> = props => {
   const open = (type: IAction, data?: User.UserItem) => {
     setAction(type)
     setVisible(true)
+    if (type === IActionData.Update) {
+      form.setFieldsValue(data)
+    }
   }
 
   // 上传前接口处理
@@ -55,9 +59,23 @@ export const CreateUser: React.FC<IModalProp> = props => {
 
   const handleSubmit = async () => {
     const values = await form.validateFields()
-    console.log(values)
+    console.log(values, action)
+    const params = { ...values, img }
+    if (action === IActionData.Create) {
+      // 新增
+      await createUser(params)
+    } else if (action === IActionData.Update) {
+      // 编辑
+      await updateUser(params)
+    }
+    props.update()
+    setVisible(false)
+    form.resetFields()
+    message.success(`用户${action === IActionData.Create ? '新增' : '编辑'}成功`)
   }
-  const handleCancel = () => {}
+  const handleCancel = () => {
+    setVisible(false)
+  }
   return (
     <Modal
       title='创建用户'
@@ -69,6 +87,9 @@ export const CreateUser: React.FC<IModalProp> = props => {
       cancelText='取消'
     >
       <Form form={form} labelCol={{ span: 4 }} labelAlign='right'>
+        <Form.Item name='userId' hidden>
+          <Input></Input>
+        </Form.Item>
         <Form.Item name='userName' label='用户名称' rules={[{ required: true, message: '请输入用户名称' }]}>
           <Input placeholder='请输入用户名称' />
         </Form.Item>

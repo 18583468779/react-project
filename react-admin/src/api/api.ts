@@ -37,3 +37,13 @@ export const getRadarData = () => {
 export const getUserList = (params?: User.params) => {
   return request.post<ResultData<User.UserItem>>('/user/list', params)
 }
+
+// 创建用户
+export const createUser = (params: User.UserItem) => {
+  return request.post<ResultData<User.UserItem>>('/user/create', params)
+}
+
+// 更新用户
+export const updateUser = (params: User.UserItem) => {
+  return request.post<ResultData<User.UserItem>>('/user/update', params)
+}
