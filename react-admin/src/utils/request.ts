@@ -40,7 +40,7 @@ instance.interceptors.response.use(
   response => {
     hideLoading()
     const res: Result = response.data
-    if (res.code === 500001) {
+    if (res.code === 401) {
       message.error(res.msg)
       removeItem('token')
       window.location.href = '/login'

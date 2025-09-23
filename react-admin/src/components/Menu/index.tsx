@@ -1,5 +1,12 @@
 import React, { useState } from 'react'
-import { AppstoreOutlined, DesktopOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons'
+import {
+  AppstoreOutlined,
+  DesktopOutlined,
+  MailOutlined,
+  SettingOutlined,
+  TeamOutlined,
+  UserOutlined
+} from '@ant-design/icons'
 import type { MenuProps, MenuTheme } from 'antd'
 import { Menu, Switch } from 'antd'
 import styles from './index.module.less'
@@ -17,7 +24,10 @@ const items: MenuItem[] = [
     key: '2',
     label: '系统管理',
     icon: <SettingOutlined />,
-    children: [{ key: '3', label: '用户管理' }]
+    children: [
+      { key: '3', label: '用户管理', icon: <UserOutlined /> },
+      { key: '4', label: '部门管理', icon: <TeamOutlined /> }
+    ]
   }
 ]
 
