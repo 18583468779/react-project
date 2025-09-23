@@ -1,5 +1,4 @@
 import type { RefObject } from 'react'
-import type { User } from './api'
 export type IAction = 'create' | 'update' | 'delete'
 export enum IActionData {
   Create = 'create',
@@ -7,7 +6,7 @@ export enum IActionData {
   Delete = 'delete'
 }
 
-export interface IModalProp {
-  mRef: RefObject<{ open: (type: IAction, data: User.UserItem) => void } | undefined>
+export interface IModalProp<T> {
+  mRef: RefObject<{ open: (type: IAction, data: T) => void } | undefined>
   update: () => void
 }

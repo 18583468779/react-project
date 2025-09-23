@@ -481,6 +481,117 @@ export default [
         }
       }
     }
+  },
+  {
+    url: '/mock/dept/list',
+    method: 'post',
+    response: (req: any) => {
+      return {
+        code: 0,
+        data: {
+          list: [
+            {
+              _id: 'dept-001',
+              deptName: '公司总部', // 顶级部门
+              userName: '张三',
+              createTime: '2024-01-01 09:00:00',
+              updateTime: '2024-01-01 09:00:00',
+              children: [
+                // 一级部门：技术部
+                {
+                  _id: 'dept-001-001',
+                  deptName: '技术部',
+                  userName: '张三',
+                  createTime: '2024-01-02 10:00:00',
+                  updateTime: '2024-01-02 10:00:00',
+                  children: [
+                    {
+                      _id: 'dept-001-001-001',
+                      deptName: '前端开发组',
+                      userName: '张三',
+                      createTime: '2024-01-03 11:00:00',
+                      updateTime: '2024-01-03 11:00:00',
+                      children: []
+                    },
+                    {
+                      _id: 'dept-001-001-002',
+                      deptName: '后端开发组',
+                      userName: '张三',
+                      createTime: '2024-01-03 11:00:00',
+                      updateTime: '2024-01-03 11:00:00',
+                      children: []
+                    },
+                    {
+                      _id: 'dept-001-001-003',
+                      deptName: '测试组',
+                      userName: '张三',
+                      createTime: '2024-01-03 11:00:00',
+                      updateTime: '2024-01-03 11:00:00',
+                      children: []
+                    }
+                  ]
+                },
+                // 一级部门：产品部
+                {
+                  _id: 'dept-001-002',
+                  deptName: '产品部',
+                  userName: '张三',
+                  createTime: '2024-01-02 10:30:00',
+                  updateTime: '2024-01-02 10:30:00',
+                  children: [
+                    {
+                      _id: 'dept-001-002-001',
+                      deptName: '产品设计组',
+                      userName: '张三',
+                      createTime: '2024-01-03 11:30:00',
+                      updateTime: '2024-01-03 11:30:00',
+                      children: []
+                    },
+                    {
+                      _id: 'dept-001-002-002',
+                      deptName: '需求分析组',
+                      userName: '张三',
+                      createTime: '2024-01-03 11:30:00',
+                      updateTime: '2024-01-03 11:30:00',
+                      children: []
+                    }
+                  ]
+                },
+                // 一级部门：人事部
+                {
+                  _id: 'dept-001-003',
+                  deptName: '人事部',
+                  createTime: '2024-01-02 11:00:00',
+                  updateTime: '2024-01-02 11:00:00',
+                  children: [
+                    {
+                      _id: 'dept-001-003-001',
+                      deptName: '招聘组',
+                      createTime: '2024-01-03 12:00:00',
+                      updateTime: '2024-01-03 12:00:00',
+                      children: []
+                    },
+                    {
+                      _id: 'dept-001-003-002',
+                      deptName: '员工关系组',
+                      createTime: '2024-01-03 12:00:00',
+                      updateTime: '2024-01-03 12:00:00',
+                      children: []
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          page: {
+            pageNum: 1,
+            pageSize: 20,
+            total: 0
+          }
+        },
+        msg: '获取部门列表成功'
+      }
+    }
   }
 ] as MockMethod[]
 

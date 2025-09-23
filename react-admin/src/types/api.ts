@@ -13,17 +13,19 @@ export interface ResultData<T = any> {
     total: number
   }
 }
+// 分页参数
 export interface PageParams {
   pageNum: number
   pageSize?: number
 }
-
+// 登录
 export namespace LoginType {
   export interface params {
     username: string
     password: string
   }
 }
+// 用户管理
 export namespace User {
   export interface params extends PageParams {
     userId?: number
@@ -43,6 +45,28 @@ export namespace User {
     roleList: string
     createId: number
     userImg: string
+  }
+}
+// 部门管理
+export namespace Dept {
+  export interface params extends PageParams {
+    deptName?: string
+  }
+  export interface CreateParams {
+    deptName: string
+    parentId?: string
+    userName: string
+  }
+  export interface EditParams extends CreateParams {
+    _id: string
+  }
+  export interface DeptItem {
+    _id: string
+    createTime: string
+    updateTime: string
+    deptName: string
+    userName: string
+    children: DeptItem[]
   }
 }
 export namespace Dashboard {

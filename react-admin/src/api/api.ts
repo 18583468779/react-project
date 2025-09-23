@@ -1,5 +1,5 @@
 import { request } from '@/utils/request'
-import type { Dashboard, LoginType, Result, ResultData, User } from '@/types/api'
+import type { Dashboard, Dept, LoginType, Result, ResultData, User } from '@/types/api'
 
 export const login = (params: LoginType.params) => {
   return request.post<{ token: string }>('/login', params, { showLoading: false, showError: true })
@@ -51,4 +51,9 @@ export const updateUser = (params: User.UserItem) => {
 // 批量删除
 export const deleteUser = (params: { ids: Array<string | number> }) => {
   return request.post<User.UserItem>('/user/delete', params)
+}
+
+// 获取部门管理
+export const getDeptList = (params?: Dept.params) => {
+  return request.post<ResultData<Dept.DeptItem>>('/dept/list', params)
 }

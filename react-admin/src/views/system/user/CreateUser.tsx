@@ -9,7 +9,7 @@ import type { RcFile, UploadChangeParam, UploadFile, UploadProps } from 'antd/es
 import * as React from 'react'
 import { useState } from 'react'
 
-export const CreateUser: React.FC<IModalProp> = props => {
+export const CreateUser: React.FC<IModalProp<User.UserItem>> = props => {
   const [form] = Form.useForm()
   const [img, setImg] = useState('')
   const [loading, setLoading] = useState(false)
