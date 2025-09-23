@@ -6,56 +6,36 @@ import type { ColumnsType } from 'antd/es/table'
 import { useEffect, useRef, useState } from 'react'
 import { CreateUser } from './CreateUser'
 import type { IAction } from '@/types/modal'
-
+import { useAntdTable } from 'ahooks'
 export default function UserList() {
-  const [data, setData] = useState<User.UserItem[]>([])
   const [form] = Form.useForm()
-  const [total, setTotal] = useState<number>(0)
   const [userIds, setUserIds] = useState<string[]>([])
   const userRef = useRef<{
     open: (type: IAction, data?: User.UserItem) => void
   }>({
     open: () => {}
   })
-  const [pagination, setPagination] = useState<PageParams>({
-    pageNum: 1,
-    pageSize: 10
+
+  const getTableData = ({ current, pageSize }: { current: number; pageSize: number }) => {
+    return getUserList({
+      pageNum: current,
+      pageSize: pageSize
+    }).then(res => {
+      return {
+        total: res.page.total,
+        list: res.list
+      }
+    })
+  }
+
+  const { tableProps, search } = useAntdTable(getTableData, {
+    form
   })
 
-  useEffect(() => {
-    handleGetUserList({
-      pageNum: 1,
-      pageSize: pagination.pageSize
-    })
-  }, [pagination.pageSize, pagination.pageNum])
-
-  const handleGetUserList = async (params: PageParams) => {
-    const values = form.getFieldsValue()
-    const res = await getUserList({ ...values, pageNum: params.pageNum, pageSize: params.pageSize })
-    setData(res.list)
-    setTotal(res.page.total)
-    setPagination({
-      ...pagination,
-      pageNum: res.page.pageNum,
-      pageSize: res.page.pageSize
-    })
-  }
-
-  const handleSearch = () => {
-    handleGetUserList({
-      pageNum: 1
-    })
-  }
-
-  const handleReset = () => {
-    form.resetFields()
-  }
   // 删除用户
   const handleDelete = async (record: User.UserItem) => {
     await deleteUser({ ids: [record.userId] })
-    handleGetUserList({
-      pageNum: pagination.pageNum
-    })
+    search.reset()
     message.success('删除成功')
   }
   // 批量删除
@@ -65,9 +45,7 @@ export default function UserList() {
       return
     }
     await deleteUser({ ids: userIds })
-    handleGetUserList({
-      pageNum: pagination.pageNum
-    })
+    search.reset()
     setUserIds([])
     message.success('删除成功')
   }
@@ -160,10 +138,10 @@ export default function UserList() {
         </Form.Item>
         <Form.Item>
           <Space>
-            <Button type='primary' onClick={() => handleSearch()}>
+            <Button type='primary' onClick={search.submit}>
               搜索
             </Button>
-            <Button type='default' onClick={() => handleReset()}>
+            <Button type='default' onClick={search.reset}>
               重置
             </Button>
           </Space>
@@ -189,33 +167,14 @@ export default function UserList() {
               setUserIds(selectedRowKeys as string[])
             }
           }}
-          pagination={{
-            current: pagination.pageNum,
-            pageSize: pagination.pageSize,
-            total,
-            showQuickJumper: true,
-            showSizeChanger: true,
-            showTotal(total) {
-              return `总共：${total} 条`
-            },
-            onChange: (pageNum, pageSize) =>
-              setPagination({
-                ...pagination,
-                pageNum,
-                pageSize
-              })
-          }}
           rowKey='userId'
           columns={columns}
-          dataSource={data}
+          {...tableProps}
         />
         <CreateUser
           mRef={userRef}
           update={() => {
-            handleGetUserList({
-              pageNum: 1,
-              pageSize: pagination.pageSize
-            })
+            search.reset()
           }}
         />
       </div>
