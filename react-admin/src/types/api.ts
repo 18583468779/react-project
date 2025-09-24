@@ -71,7 +71,13 @@ export namespace Dept {
 }
 
 // 菜单管理
-export namespace Menu {}
+export namespace Menu {
+  export interface Params {
+    menuName: string
+    menuState: number
+  }
+  // 菜单创建 https://gitee.com/losemyphone/my-react-manager/blob/master/src/types/api.ts
+}
 export namespace Dashboard {
   export interface ReportData {
     driverCount: number
