@@ -12,7 +12,7 @@ interface Props {}
 const Department: FunctionComponent<Props> = () => {
   const [form] = Form.useForm()
   const createDeptRef = useRef<{
-    open: (type: IAction, data?: Dept.DeptItem) => void
+    open: (type: IAction, data?: Dept.DeptItem | { parentId: string }) => void
   }>({
     open: () => {}
   })
@@ -31,8 +31,12 @@ const Department: FunctionComponent<Props> = () => {
     createDeptRef.current.open(IActionData.Create)
   }
 
+  const handleSubCreate = (id: string) => {
+    createDeptRef.current.open(IActionData.Create, { parentId: id })
+  }
+
   const handleEdit = (record: Dept.DeptItem) => {
-    createDeptRef.current.open(IActionData.Update, record)
+    createDeptRef.current.open(IActionData.Update, { ...record })
   }
 
   const colmuns: ColumnsType<Dept.DeptItem> = [
@@ -71,7 +75,9 @@ const Department: FunctionComponent<Props> = () => {
       render(_, record) {
         return (
           <Space>
-            <Button type='text'>新增</Button>
+            <Button type='text' onClick={() => handleSubCreate(record._id)}>
+              新增
+            </Button>
             <Button type='text' onClick={() => handleEdit(record)}>
               编辑
             </Button>
