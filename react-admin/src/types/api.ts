@@ -69,6 +69,9 @@ export namespace Dept {
     children: DeptItem[]
   }
 }
+
+// 菜单管理
+export namespace Menu {}
 export namespace Dashboard {
   export interface ReportData {
     driverCount: number
