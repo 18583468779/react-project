@@ -105,8 +105,6 @@ const generateRandomUser = (id: number) => {
   }
 }
 
-
-
 // 初始化20条用户数据
 const initializeUsers = () => {
   if (userDatabase.length === 0) {
@@ -119,41 +117,41 @@ const initializeUsers = () => {
 // 初始化用户数据
 initializeUsers()
 
-
 // 菜单模块
 // 全局菜单数据存储
-let menuDatabase: Menu.MenuItem[] = [];
+let menuDatabase: Menu.MenuItem[] = []
 
 // 生成随机菜单数据
 const generateRandomMenu = (id: string, parentId?: string, level = 0): Menu.MenuItem => {
-  const menuTypes = [1, 2, 3]; // 1：菜单 2：按钮 3：页面
-  const menuStates = [1, 2]; // 1: 正常 2：停用
-  
+  const menuTypes = [1, 2, 3] // 1：菜单 2：按钮 3：页面
+  const menuStates = [1, 2] // 1: 正常 2：停用
+
   // 菜单名称
-  const baseNames = ['首页', '用户管理', '角色管理', '菜单管理', '系统设置', '数据统计', '日志查询'];
-  const buttonNames = ['新增', '编辑', '删除', '查询', '导出', '导入', '批量操作'];
-  
-  let menuName: string;
-  let menuType: number;
-  
+  const baseNames = ['首页', '用户管理', '角色管理', '菜单管理', '系统设置', '数据统计', '日志查询']
+  const buttonNames = ['新增', '编辑', '删除', '查询', '导出', '导入', '批量操作']
+
+  let menuName: string
+  let menuType: number
+
   // 顶级菜单通常是菜单或页面类型
   if (level === 0) {
-    menuType = [1, 3][Math.floor(Math.random() * 2)];
-    menuName = baseNames[Math.floor(Math.random() * baseNames.length)];
-  } 
+    menuType = [1, 3][Math.floor(Math.random() * 2)]
+    menuName = baseNames[Math.floor(Math.random() * baseNames.length)]
+  }
   // 子菜单可以是各种类型，按钮通常作为子项
   else {
-    menuType = menuTypes[Math.floor(Math.random() * menuTypes.length)];
-    menuName = menuType === 2 
-      ? buttonNames[Math.floor(Math.random() * buttonNames.length)]
-      : `${baseNames[Math.floor(Math.random() * baseNames.length)]}-子项`;
+    menuType = menuTypes[Math.floor(Math.random() * menuTypes.length)]
+    menuName =
+      menuType === 2
+        ? buttonNames[Math.floor(Math.random() * buttonNames.length)]
+        : `${baseNames[Math.floor(Math.random() * baseNames.length)]}-子项`
   }
 
   // 生成创建时间（最近30天内）
-  const now = new Date();
-  const randomDays = Math.floor(Math.random() * 30);
-  now.setDate(now.getDate() - randomDays);
-  const createTime = now.toISOString().slice(0, 19).replace('T', ' ');
+  const now = new Date()
+  const randomDays = Math.floor(Math.random() * 30)
+  now.setDate(now.getDate() - randomDays)
+  const createTime = now.toISOString().slice(0, 19).replace('T', ' ')
 
   const menu: Menu.MenuItem = {
     _id: id,
@@ -162,34 +160,34 @@ const generateRandomMenu = (id: string, parentId?: string, level = 0): Menu.Menu
     menuState: menuStates[Math.floor(Math.random() * menuStates.length)],
     createTime,
     // 根据类型添加不同属性
-    ...(menuType === 1 && { 
+    ...(menuType === 1 && {
       icon: ['icon-home', 'icon-user', 'icon-setting', 'icon-menu'][Math.floor(Math.random() * 4)],
       path: `/${menuName.toLowerCase().replace(/\s+/g, '-')}`,
       component: `views/${menuName.toLowerCase().replace(/\s+/g, '-')}/index.vue`
     }),
     ...(menuType === 2 && { menuCode: `btn_${menuName.toLowerCase()}_${id.slice(0, 8)}` }),
-    ...(menuType === 3 && { 
+    ...(menuType === 3 && {
       path: `/${menuName.toLowerCase().replace(/\s+/g, '-')}`,
       component: `pages/${menuName.toLowerCase().replace(/\s+/g, '-')}.vue`
     }),
     ...(parentId && { parentId })
-  };
+  }
 
   // 递归生成子菜单（顶级菜单有更高概率有子菜单）
   if (level < 2 && Math.random() > (level === 0 ? 0.3 : 0.6)) {
-    const childCount = Math.floor(Math.random() * 3) + 1;
-    menu.children = [];
+    const childCount = Math.floor(Math.random() * 3) + 1
+    menu.children = []
     for (let i = 0; i < childCount; i++) {
-      const childId = `${id}-${i + 1}`;
-      menu.children.push(generateRandomMenu(childId, id, level + 1));
+      const childId = `${id}-${i + 1}`
+      menu.children.push(generateRandomMenu(childId, id, level + 1))
     }
-    
+
     // 为菜单类型添加按钮
     if (menu.menuType === 1 && Math.random() > 0.4) {
-      const buttonCount = Math.floor(Math.random() * 3) + 1;
-      menu.buttons = [];
+      const buttonCount = Math.floor(Math.random() * 3) + 1
+      menu.buttons = []
       for (let i = 0; i < buttonCount; i++) {
-        const buttonId = `${id}-btn-${i + 1}`;
+        const buttonId = `${id}-btn-${i + 1}`
         menu.buttons.push({
           _id: buttonId,
           menuName: buttonNames[Math.floor(Math.random() * buttonNames.length)],
@@ -198,46 +196,47 @@ const generateRandomMenu = (id: string, parentId?: string, level = 0): Menu.Menu
           menuCode: `btn_${menuName.toLowerCase()}_${buttonId.slice(0, 8)}`,
           parentId: id,
           createTime
-        });
+        })
       }
     }
   }
 
-  return menu;
-};
+  return menu
+}
 
 // 初始化菜单数据
 const initializeMenus = () => {
   if (menuDatabase.length === 0) {
     // 创建5个顶级菜单
     for (let i = 1; i <= 5; i++) {
-      const menuId = `menu-${uuidv4().slice(0, 8)}`;
-      menuDatabase.push(generateRandomMenu(menuId));
+      const menuId = `menu-${uuidv4().slice(0, 8)}`
+      menuDatabase.push(generateRandomMenu(menuId))
     }
   }
-};
+}
 
 // 初始化菜单数据
-initializeMenus();
+initializeMenus()
 
 // 工具函数：递归查找菜单
-const findMenuById = (menus: any, id: string): {menu: Menu.MenuItem, parent: Menu.MenuItem | null, index: number} | null => {
+const findMenuById = (
+  menus: any,
+  id: string
+): { menu: Menu.MenuItem; parent: Menu.MenuItem | null; index: number } | null => {
   for (let i = 0; i < menus.length; i++) {
     if (menus[i]._id === id) {
-      return { menu: menus[i], parent: null, index: i };
+      return { menu: menus[i], parent: null, index: i }
     }
-    
+
     if (menus[i].children && menus[i].children.length > 0) {
-      const result = findMenuById(menus[i].children, id);
+      const result = findMenuById(menus[i].children, id)
       if (result) {
-        return { ...result, parent: menus[i] };
+        return { ...result, parent: menus[i] }
       }
     }
   }
-  return null;
-};
-
-
+  return null
+}
 
 export default [
   {
@@ -720,23 +719,19 @@ export default [
     url: '/mock/menu/list',
     method: 'post',
     response: (res: any) => {
-      const { menuName, menuState } = res.body;
-      
+      const { menuName, menuState } = res.body
+
       // 过滤菜单
-      let filteredMenus = [...menuDatabase];
-      
+      let filteredMenus = [...menuDatabase]
+
       if (menuName) {
-        filteredMenus = filteredMenus.filter(menu => 
-          menu.menuName.includes(menuName)
-        );
+        filteredMenus = filteredMenus.filter(menu => menu.menuName.includes(menuName))
       }
-      
+
       if (menuState !== undefined) {
-        filteredMenus = filteredMenus.filter(menu => 
-          menu.menuState === menuState
-        );
+        filteredMenus = filteredMenus.filter(menu => menu.menuState === menuState)
       }
-      
+
       return {
         code: 0,
         data: {
@@ -744,280 +739,321 @@ export default [
           total: filteredMenus.length
         },
         msg: '获取菜单列表成功'
-      };
+      }
     }
   },
-  
+
   // 获取菜单详情
   {
     url: '/mock/menu/detail',
     method: 'post',
     response: (res: any) => {
-      const { _id } = res.body;
-      
+      const { _id } = res.body
+
       if (!_id) {
         return {
           code: 400,
           data: null,
           msg: '菜单ID不能为空'
-        };
+        }
       }
-      
-      const result = findMenuById(menuDatabase, _id);
-      
+
+      const result = findMenuById(menuDatabase, _id)
+
       if (!result) {
         return {
           code: 404,
           data: null,
           msg: `未找到ID为${_id}的菜单`
-        };
+        }
       }
-      
+
       return {
         code: 0,
         data: result.menu,
         msg: '获取菜单详情成功'
-      };
+      }
     }
   },
-  
+
   // 创建菜单
   {
     url: '/mock/menu/create',
     method: 'post',
     response: (res: any) => {
       try {
-        const menuData: Menu.CreateParams = res.body;
-        
+        const menuData: Menu.CreateParams = res.body
+
         if (!menuData.menuName || menuData.menuType === undefined) {
           return {
             code: 400,
             data: null,
             msg: '菜单名称和菜单类型为必填项'
-          };
+          }
         }
-        
-        const menuId = `menu-${uuidv4().slice(0, 8)}`;
-        const createTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
-        
+
+        const menuId = `menu-${uuidv4().slice(0, 8)}`
+        const createTime = new Date().toISOString().slice(0, 19).replace('T', ' ')
+
         const newMenu: Menu.MenuItem = {
           _id: menuId,
           ...menuData,
           createTime: createTime
-        };
-        
+        }
+
         // 如果有父菜单ID，添加到对应父菜单的children中
         if (menuData.parentId) {
-          const parentResult = findMenuById(menuDatabase, menuData.parentId);
-          
+          const parentResult = findMenuById(menuDatabase, menuData.parentId)
+
           if (parentResult) {
             if (!parentResult.menu.children) {
-              parentResult.menu.children = [];
+              parentResult.menu.children = []
             }
-            parentResult.menu.children.push(newMenu);
-            
+            parentResult.menu.children.push(newMenu)
+
             // 如果是按钮类型，同时添加到buttons数组
             if (menuData.menuType === 2) {
               if (!parentResult.menu.buttons) {
-                parentResult.menu.buttons = [];
+                parentResult.menu.buttons = []
               }
-              parentResult.menu.buttons.push(newMenu);
+              parentResult.menu.buttons.push(newMenu)
             }
           } else {
             return {
               code: 404,
               data: null,
               msg: `未找到父菜单ID为${menuData.parentId}的菜单`
-            };
+            }
           }
         } else {
           // 顶级菜单直接添加到数据库
-          menuDatabase.push(newMenu);
+          menuDatabase.push(newMenu)
         }
-        
+
         return {
           code: 0,
           data: newMenu,
           msg: '创建菜单成功'
-        };
+        }
       } catch (error: any) {
         return {
           code: 500,
           data: null,
           msg: `创建菜单失败: ${error.message}`
-        };
+        }
       }
     }
   },
-  
+
   // 更新菜单
   {
     url: '/mock/menu/update',
     method: 'post',
     response: (res: any) => {
       try {
-        const updateData: Menu.EditParams = res.body;
-        
+        const updateData: Menu.EditParams = res.body
+
         if (!updateData._id) {
           return {
             code: 400,
             data: null,
             msg: '菜单ID不能为空'
-          };
+          }
         }
-        
-        const result = findMenuById(menuDatabase, updateData._id);
-        
+
+        const result = findMenuById(menuDatabase, updateData._id)
+
         if (!result) {
           return {
             code: 404,
             data: null,
             msg: `未找到ID为${updateData._id}的菜单`
-          };
+          }
         }
-        
+
         // 更新菜单数据（排除_id和createTime）
-        const { _id, createTime, ...updateFields } = updateData;
-        const updatedMenu = { ...result.menu, ...updateFields };
-        
+        const { _id, createTime, ...updateFields } = updateData
+        const updatedMenu = { ...result.menu, ...updateFields }
+
         // 处理父菜单变更的情况
         if (updateFields.parentId && updateFields.parentId !== result.menu.parentId) {
           // 从原父菜单中移除
           if (result.parent) {
             if (result.parent.children) {
-              result.parent.children = result.parent.children.filter(
-                menu => menu._id !== updateData._id
-              );
+              result.parent.children = result.parent.children.filter(menu => menu._id !== updateData._id)
             }
             // 如果是按钮，同时从buttons中移除
             if (result.menu.menuType === 2 && result.parent.buttons) {
-              result.parent.buttons = result.parent.buttons.filter(
-                btn => btn._id !== updateData._id
-              );
+              result.parent.buttons = result.parent.buttons.filter(btn => btn._id !== updateData._id)
             }
           } else {
             // 顶级菜单从根数组中移除
-            menuDatabase = menuDatabase.filter(menu => menu._id !== updateData._id);
+            menuDatabase = menuDatabase.filter(menu => menu._id !== updateData._id)
           }
-          
+
           // 添加到新的父菜单
-          const newParentResult = findMenuById(menuDatabase, updateFields.parentId);
+          const newParentResult = findMenuById(menuDatabase, updateFields.parentId)
           if (newParentResult) {
             if (!newParentResult.menu.children) {
-              newParentResult.menu.children = [];
+              newParentResult.menu.children = []
             }
-            newParentResult.menu.children.push(updatedMenu);
-            
+            newParentResult.menu.children.push(updatedMenu)
+
             // 如果是按钮类型，同时添加到buttons数组
             if (updatedMenu.menuType === 2) {
               if (!newParentResult.menu.buttons) {
-                newParentResult.menu.buttons = [];
+                newParentResult.menu.buttons = []
               }
-              newParentResult.menu.buttons.push(updatedMenu);
+              newParentResult.menu.buttons.push(updatedMenu)
             }
           } else {
             return {
               code: 404,
               data: null,
               msg: `未找到新的父菜单ID为${updateFields.parentId}的菜单`
-            };
+            }
           }
         } else {
           // 父菜单未变更，直接更新
           if (result.parent) {
             if (result.parent.children) {
-              result.parent.children[result.index] = updatedMenu;
+              result.parent.children[result.index] = updatedMenu
             }
             // 如果是按钮，同时更新buttons数组
             if (updatedMenu.menuType === 2 && result.parent.buttons) {
-              const btnIndex = result.parent.buttons.findIndex(btn => btn._id === updateData._id);
+              const btnIndex = result.parent.buttons.findIndex(btn => btn._id === updateData._id)
               if (btnIndex !== -1) {
-                result.parent.buttons[btnIndex] = updatedMenu;
+                result.parent.buttons[btnIndex] = updatedMenu
               }
             }
           } else {
-            menuDatabase[result.index] = updatedMenu;
+            menuDatabase[result.index] = updatedMenu
           }
         }
-        
+
         return {
           code: 0,
           data: updatedMenu,
           msg: '更新菜单成功'
-        };
+        }
       } catch (error: any) {
         return {
           code: 500,
           data: null,
           msg: `更新菜单失败: ${error.message}`
-        };
+        }
       }
     }
   },
-  
+
   // 删除菜单
   {
     url: '/mock/menu/delete',
     method: 'post',
     response: (res: any) => {
       try {
-        const { _id } = res.body as Menu.DeleteParams;
-        
+        const { _id } = res.body as Menu.DeleteParams
+
         if (!_id) {
           return {
             code: 400,
             data: null,
             msg: '菜单ID不能为空'
-          };
+          }
         }
-        
-        const result = findMenuById(menuDatabase, _id);
-        
+
+        const result = findMenuById(menuDatabase, _id)
+
         if (!result) {
           return {
             code: 404,
             data: null,
             msg: `未找到ID为${_id}的菜单`
-          };
+          }
         }
-        
+
         // 检查是否有子菜单
         if (result.menu.children && result.menu.children.length > 0) {
           return {
             code: 400,
             data: null,
             msg: '该菜单包含子菜单，请先删除子菜单'
-          };
+          }
         }
-        
+
         // 从父菜单或根数组中移除
         if (result.parent) {
           if (result.parent.children) {
-            result.parent.children = result.parent.children.filter(
-              menu => menu._id !== _id
-            );
+            result.parent.children = result.parent.children.filter(menu => menu._id !== _id)
           }
           // 如果是按钮，同时从buttons中移除
           if (result.menu.menuType === 2 && result.parent.buttons) {
-            result.parent.buttons = result.parent.buttons.filter(
-              btn => btn._id !== _id
-            );
+            result.parent.buttons = result.parent.buttons.filter(btn => btn._id !== _id)
           }
         } else {
-          menuDatabase = menuDatabase.filter(menu => menu._id !== _id);
+          menuDatabase = menuDatabase.filter(menu => menu._id !== _id)
         }
-        
+
         return {
           code: 0,
           data: { _id },
           msg: '删除菜单成功'
-        };
+        }
       } catch (error: any) {
         return {
           code: 500,
           data: null,
           msg: `删除菜单失败: ${error.message}`
-        };
+        }
+      }
+    }
+  },
+  // 获取菜单权限
+  {
+    url: '/mock/user/getPermissionList',
+    method: 'get',
+    response: () => {
+      return {
+        code: 0,
+        data: {
+          menuList: [
+            {
+              _id: 'menu-1a2b3c4d',
+              menuName: '首页',
+              menuType: 3,
+              menuState: 1,
+              createTime: '2024-05-01 10:00:00',
+              path: '/welcome',
+              component: 'pages/welcome.vue',
+              children: []
+            },
+            {
+              _id: 'menu-5e6f7g8h',
+              menuName: '用户管理',
+              menuType: 1,
+              menuState: 1,
+              createTime: '2024-05-01 11:00:00',
+              icon: 'icon-user',
+              path: '/system/user',
+              component: 'views/system/user/index.vue',
+              children: []
+            }
+            // 更多树形菜单...
+          ],
+          buttonList: [
+            'welcome@query',
+            'user@add',
+            'user@edit',
+            'user@delete',
+            'user@export',
+            'dept@add',
+            'dept@edit',
+            'menu@add',
+            'menu@delete',
+            'dashboard@query'
+          ]
+        },
+        msg: '获取菜单权限成功'
       }
     }
   }

@@ -12,7 +12,10 @@ export const loginError = (params: LoginType.params) => {
 export const userInfo = () => {
   return request.post<User.UserItem>('/userInfo', {})
 }
-
+// 获取权限列表
+export const getPermissionList = () => {
+  return request.get<{ buttonList: string[]; menuList: Menu.MenuItem[] }>('/user/getPermissionList')
+}
 // 获取工作台报表汇总数据
 export const getReportData = () => {
   return request.post<Dashboard.ReportData>('/dashboard/reportData', {})
@@ -57,7 +60,6 @@ export const deleteUser = (params: { ids: Array<string | number> }) => {
 export const getDeptList = (params?: Dept.params) => {
   return request.post<ResultData<Dept.DeptItem>>('/dept/list', params)
 }
-
 
 // 菜单管理
 export const getMenuList = (params?: Menu.Params) => {

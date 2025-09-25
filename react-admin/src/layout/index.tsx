@@ -3,14 +3,15 @@ import { Layout, Watermark } from 'antd'
 import NavHeader from '@/components/NavHeader'
 import NavFooter from '@/components/NavFooter'
 import MenuComponent from '@/components/Menu'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useRouteLoaderData } from 'react-router-dom'
 const { Sider } = Layout
 import styles from './index.module.less'
 import { userInfo } from '@/api/api'
 import { userStore } from '@/store'
 const App: React.FC = () => {
   const state = userStore()
-
+  const data = useRouteLoaderData('layout')
+  console.log('data', data)
   useEffect(() => {
     handleGetUserInfo()
   }, [])
