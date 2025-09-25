@@ -56,7 +56,7 @@ instance.interceptors.response.use(
   },
   error => {
     hideLoading()
-    if (error.response.status === 401) {
+    if (error.status === 401) {
       // 处理未授权错误，例如跳转到登录页
       window.location.href = '/login'
     }

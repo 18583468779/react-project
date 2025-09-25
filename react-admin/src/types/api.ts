@@ -70,14 +70,6 @@ export namespace Dept {
   }
 }
 
-// 菜单管理
-export namespace Menu {
-  export interface Params {
-    menuName: string
-    menuState: number
-  }
-  // 菜单创建 https://gitee.com/losemyphone/my-react-manager/blob/master/src/types/api.ts
-}
 export namespace Dashboard {
   export interface ReportData {
     driverCount: number
@@ -101,4 +93,39 @@ export namespace Dashboard {
       value: number[]
     }
   }
+}
+
+// 菜单管理
+export namespace Menu {
+  export interface Params {
+    menuName: string
+    menuState: number
+  }
+  // 菜单创建
+  export interface CreateParams {
+    menuName: string // 菜单名称
+    icon?: string  // 图标
+    menuType: number // 菜单类型 1：菜单 2：按钮 3：页面
+    menuState: number   // 1: 正常 2：停用
+    menuCode?: string // 按钮权限表示
+    parentId?: string // 父菜单id
+    path?: string // 路由地址
+    component?: string // 组件路径
+  }
+  // 菜单详情
+  export interface MenuItem extends CreateParams {
+      _id: string
+      createTime: string
+      buttons?: MenuItem[] // 按钮列表
+      children?: MenuItem[] // 子菜单列表
+  }
+
+  export interface EditParams extends CreateParams {
+    _id?: string
+  }
+
+  export interface DeleteParams { 
+    _id:string
+  }
+
 }

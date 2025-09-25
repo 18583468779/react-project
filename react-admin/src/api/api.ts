@@ -1,5 +1,5 @@
 import { request } from '@/utils/request'
-import type { Dashboard, Dept, LoginType, Result, ResultData, User } from '@/types/api'
+import type { Dashboard, Dept, LoginType, Menu, Result, ResultData, User } from '@/types/api'
 
 export const login = (params: LoginType.params) => {
   return request.post<{ token: string }>('/login', params, { showLoading: false, showError: true })
@@ -56,4 +56,25 @@ export const deleteUser = (params: { ids: Array<string | number> }) => {
 // 获取部门管理
 export const getDeptList = (params?: Dept.params) => {
   return request.post<ResultData<Dept.DeptItem>>('/dept/list', params)
+}
+
+
+// 菜单管理
+export const getMenuList = (params?: Menu.Params) => {
+  return request.post<Menu.MenuItem[]>('/menu/list', params)
+}
+
+// 创建菜单
+export const createMenu = (params: Menu.CreateParams) => {
+  return request.post('/menu/create', params)
+}
+
+// 更新菜单
+export const updateMenu = (params: Menu.EditParams) => {
+  return request.post('/menu/update', params)
+}
+
+// 删除菜单
+export const deleteMenu = (params: Menu.DeleteParams) => {
+  return request.post('/menu/delete', params)
 }

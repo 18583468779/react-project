@@ -1,63 +1,87 @@
-import { getDeptList } from '@/api/api'
-import type { Dept } from '@/types/api'
+import { deleteMenu, getMenuList } from '@/api/api'
+import type { Menu } from '@/types/api'
 import { toLocalDate } from '@/utils'
-import { Button, Form, Input, Space, Table } from 'antd'
+import { Button, Form, Input, Popconfirm, Radio, Select, Space, Table, message } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useEffect, useRef, useState, type FunctionComponent } from 'react'
 import { IActionData, type IAction } from '@/types/modal'
+import CreateMenu from './CreateMenu'
 
 interface Props {}
 
-const Department: FunctionComponent<Props> = () => {
+const MenuList: FunctionComponent<Props> = () => {
   const [form] = Form.useForm()
-  const createDeptRef = useRef<{
-    open: (type: IAction, data?: Dept.DeptItem | { parentId: string }) => void
+  const createMenuRef = useRef<{
+    open: (type: IAction, data?: Menu.MenuItem | { parentId?: string; orderBy: number }) => void
   }>({
     open: () => {}
   })
-  const [deptList, setDeptList] = useState<Dept.DeptItem[]>([])
+  const [menuList, setMenuList] = useState<Menu.MenuItem[]>([])
 
   useEffect(() => {
-    handleGetDeptList()
+    handleGetMenuList()
   }, [])
 
-  const handleGetDeptList = async () => {
-    const res = await getDeptList()
-    setDeptList(res.list)
+  const handleGetMenuList = async () => {
+    const res = (await getMenuList(form.getFieldsValue())) as any
+    setMenuList(res.list)
   }
 
   const handleCreate = () => {
-    createDeptRef.current.open(IActionData.Create)
+    createMenuRef.current.open(IActionData.Create,{ orderBy: menuList.length} )
   }
 
   const handleSubCreate = (id: string) => {
-    createDeptRef.current.open(IActionData.Create, { parentId: id })
+    createMenuRef.current.open(IActionData.Create, { parentId: id, orderBy: menuList.length })
   }
 
-  const handleEdit = (record: Dept.DeptItem) => {
-    createDeptRef.current.open(IActionData.Update, { ...record })
+  const handleEdit = (record: Menu.MenuItem) => {
+    createMenuRef.current.open(IActionData.Update, { ...record,  })
   }
 
-  const colmuns: ColumnsType<Dept.DeptItem> = [
+  const handleDelete = async (_id: string) => {
+    await deleteMenu({ _id })
+    message.success('删除成功')
+    handleGetMenuList()
+  }
+
+  const colmuns: ColumnsType<Menu.MenuItem> = [
     {
-      title: '部门名称',
-      dataIndex: 'deptName',
-      key: 'deptName',
-      width: 200
+      title: '菜单名称',
+      dataIndex: 'menuName',
+      key: 'menuName'
     },
     {
-      title: '负责人',
-      dataIndex: 'userName',
-      key: 'userName',
-      width: 150
+      title: '菜单图标',
+      dataIndex: 'icon',
+      key: 'icon'
     },
     {
-      title: '更新时间',
-      dataIndex: 'updateTime',
-      key: 'updateTime',
-      render(updateTime) {
-        return toLocalDate(updateTime)
+      title: '菜单类型',
+      dataIndex: 'menuType',
+      key: 'menuType',
+      render(menuType: number) {
+        return {
+          1: '菜单',
+          2: '按钮',
+          3: '页面'
+        }[menuType]
       }
+    },
+    {
+      title: '权限标识',
+      dataIndex: 'menuCode',
+      key: 'menuCode'
+    },
+    {
+      title: '路由地址',
+      dataIndex: 'path',
+      key: 'path'
+    },
+    {
+      title: '组件名称',
+      dataIndex: 'component',
+      key: 'component'
     },
     {
       title: '创建时间',
@@ -80,9 +104,11 @@ const Department: FunctionComponent<Props> = () => {
             <Button type='text' onClick={() => handleEdit(record)}>
               编辑
             </Button>
-            <Button type='text' danger>
-              删除
-            </Button>
+            <Popconfirm title='确定删除吗？' onConfirm={() => handleDelete(record._id)} okText="确认" cancelText="取消">
+              <Button type='text' danger>
+                删除
+              </Button>
+            </Popconfirm>
           </Space>
         )
       }
@@ -92,30 +118,45 @@ const Department: FunctionComponent<Props> = () => {
   return (
     <div>
       <Form className='search-form' layout='inline' form={form}>
-        <Form.Item name='deptName' label='部门名称'>
-          <Input placeholder='请输入部门名称' />
+        <Form.Item name='menuName' label='菜单名称'>
+          <Input placeholder='请输入菜单名称' />
         </Form.Item>
-
+        <Form.Item label='菜单状态' name='menuState'>
+          <Select placeholder='请选择菜单状态' allowClear style={{ width: 120 }}>
+            <Select.Option value={1}>启用</Select.Option>
+            <Select.Option value={2}>停用</Select.Option>
+          </Select>
+        </Form.Item>
         <Form.Item>
           <Space>
-            <Button type='primary'>搜索</Button>
-            <Button type='default'>重置</Button>
+            <Button type='primary' onClick={handleGetMenuList}>
+              搜索
+            </Button>
+            <Button type='default' onClick={() => form.resetFields()}>
+              重置
+            </Button>
           </Space>
         </Form.Item>
       </Form>
       <div className='base-table'>
         <div className='header-wrapper'>
-          <div className='title'>部门列表</div>
+          <div className='title'>菜单列表</div>
           <div className='action'>
             <Button type='primary' onClick={handleCreate}>
               新增
             </Button>
           </div>
         </div>
-        <Table bordered rowKey='_id' columns={colmuns} dataSource={deptList} pagination={false} />
+        <Table bordered rowKey='_id' columns={colmuns} dataSource={menuList} pagination={false} />
       </div>
+      <CreateMenu
+        mRef={createMenuRef}
+        update={() => {
+          handleGetMenuList()
+        }}
+      />
     </div>
   )
 }
 
-export default Department
+export default MenuList
