@@ -4,12 +4,15 @@ import { IActionData, type IAction, type IModalProp } from '@/types/modal'
 import { InfoCircleOutlined } from '@ant-design/icons'
 import { Form, Input, InputNumber, Modal, Radio, Select, TreeSelect } from 'antd'
 import { useEffect, useImperativeHandle, useState, type FunctionComponent } from 'react'
-
+import IconSelect from '@/components/IconSelect'
 const CreateMenu: FunctionComponent<IModalProp<Menu.MenuItem>> = ({ mRef, update }) => {
   const [form] = Form.useForm()
   const [visible, setVisible] = useState(false)
   const [action, setAction] = useState<IAction>('create')
   const [menuList, setMenuList] = useState<Menu.MenuItem[]>([])
+  const [icon,setIcon] = useState<string>('')
+
+
 
   useEffect(() => {
     handleGetMenuList()
@@ -25,26 +28,32 @@ const CreateMenu: FunctionComponent<IModalProp<Menu.MenuItem>> = ({ mRef, update
       open(type, data) {
         setAction(type)
         setVisible(true)
-        console.log('data',data)
         if (data) {
           form.setFieldsValue(data)
+          setIcon(data.icon || '')
         }
         update()
       }
     }
   })
 
+  // 选择图标
+  const handleIconChange = (value: string) => {
+    setIcon(value)
+  }
+
   const onCancel = () => {
     setVisible(false)
     form.resetFields()
+    setIcon('')
   }
   const onOk = async () => {
     const valid = await form.validateFields()
     if (valid) {
       if (action === IActionData.Create) {
-        await createMenu(form.getFieldsValue())
+        await createMenu({...form.getFieldsValue(),icon})
       } else {
-        await updateMenu(form.getFieldsValue())
+        await updateMenu({...form.getFieldsValue(),icon})
       }
       onCancel()
       update()
@@ -100,7 +109,7 @@ const CreateMenu: FunctionComponent<IModalProp<Menu.MenuItem>> = ({ mRef, update
             ) : (
               <>
                 <Form.Item label='菜单图标' name='icon'>
-                  <Input placeholder='请输入菜单图标' />
+                  <IconSelect onChange={handleIconChange} defaultValue={icon}  />
                 </Form.Item>
                 <Form.Item label='路由地址' name='path'>
                   <Input placeholder='请输入路由地址' />

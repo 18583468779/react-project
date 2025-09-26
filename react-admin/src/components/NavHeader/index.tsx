@@ -27,7 +27,9 @@ const NavHeader = () => {
   return (
     <div className={styles.navHeader}>
       <div className={styles.left}>
-        <div onClick={toggleCollapsed}>{collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}</div>
+        <div onClick={toggleCollapsed} style={{ cursor: 'pointer' }}>
+          {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+        </div>
         <Breadcrumb
           style={{ marginLeft: 10 }}
           items={[

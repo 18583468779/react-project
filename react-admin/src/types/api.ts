@@ -117,7 +117,7 @@ export namespace Menu {
       _id: string
       createTime: string
       buttons?: MenuItem[] // 按钮列表
-      children?: MenuItem[] // 子菜单列表
+      children: MenuItem[] // 子菜单列表
   }
 
   export interface EditParams extends CreateParams {

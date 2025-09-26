@@ -105,6 +105,8 @@ const generateRandomUser = (id: number) => {
   }
 }
 
+
+
 // 初始化20条用户数据
 const initializeUsers = () => {
   if (userDatabase.length === 0) {
@@ -119,119 +121,343 @@ initializeUsers()
 
 // 菜单模块
 // 全局菜单数据存储
-let menuDatabase: Menu.MenuItem[] = []
-
-// 生成随机菜单数据
-const generateRandomMenu = (id: string, parentId?: string, level = 0): Menu.MenuItem => {
-  const menuTypes = [1, 2, 3] // 1：菜单 2：按钮 3：页面
-  const menuStates = [1, 2] // 1: 正常 2：停用
-
-  // 菜单名称
-  const baseNames = ['首页', '用户管理', '角色管理', '菜单管理', '系统设置', '数据统计', '日志查询']
-  const buttonNames = ['新增', '编辑', '删除', '查询', '导出', '导入', '批量操作']
-
-  let menuName: string
-  let menuType: number
-
-  // 顶级菜单通常是菜单或页面类型
-  if (level === 0) {
-    menuType = [1, 3][Math.floor(Math.random() * 2)]
-    menuName = baseNames[Math.floor(Math.random() * baseNames.length)]
-  }
-  // 子菜单可以是各种类型，按钮通常作为子项
-  else {
-    menuType = menuTypes[Math.floor(Math.random() * menuTypes.length)]
-    menuName =
-      menuType === 2
-        ? buttonNames[Math.floor(Math.random() * buttonNames.length)]
-        : `${baseNames[Math.floor(Math.random() * baseNames.length)]}-子项`
-  }
-
-  // 生成创建时间（最近30天内）
-  const now = new Date()
-  const randomDays = Math.floor(Math.random() * 30)
-  now.setDate(now.getDate() - randomDays)
-  const createTime = now.toISOString().slice(0, 19).replace('T', ' ')
-
-  const menu: Menu.MenuItem = {
-    _id: id,
-    menuName,
-    menuType,
-    menuState: menuStates[Math.floor(Math.random() * menuStates.length)],
-    createTime,
-    // 根据类型添加不同属性
-    ...(menuType === 1 && {
-      icon: ['icon-home', 'icon-user', 'icon-setting', 'icon-menu'][Math.floor(Math.random() * 4)],
-      path: `/${menuName.toLowerCase().replace(/\s+/g, '-')}`,
-      component: `views/${menuName.toLowerCase().replace(/\s+/g, '-')}/index.vue`
-    }),
-    ...(menuType === 2 && { menuCode: `btn_${menuName.toLowerCase()}_${id.slice(0, 8)}` }),
-    ...(menuType === 3 && {
-      path: `/${menuName.toLowerCase().replace(/\s+/g, '-')}`,
-      component: `pages/${menuName.toLowerCase().replace(/\s+/g, '-')}.vue`
-    }),
-    ...(parentId && { parentId })
-  }
-
-  // 递归生成子菜单（顶级菜单有更高概率有子菜单）
-  if (level < 2 && Math.random() > (level === 0 ? 0.3 : 0.6)) {
-    const childCount = Math.floor(Math.random() * 3) + 1
-    menu.children = []
-    for (let i = 0; i < childCount; i++) {
-      const childId = `${id}-${i + 1}`
-      menu.children.push(generateRandomMenu(childId, id, level + 1))
-    }
-
-    // 为菜单类型添加按钮
-    if (menu.menuType === 1 && Math.random() > 0.4) {
-      const buttonCount = Math.floor(Math.random() * 3) + 1
-      menu.buttons = []
-      for (let i = 0; i < buttonCount; i++) {
-        const buttonId = `${id}-btn-${i + 1}`
-        menu.buttons.push({
-          _id: buttonId,
-          menuName: buttonNames[Math.floor(Math.random() * buttonNames.length)],
-          menuType: 2,
-          menuState: 1,
-          menuCode: `btn_${menuName.toLowerCase()}_${buttonId.slice(0, 8)}`,
-          parentId: id,
-          createTime
-        })
+let menuDatabase: Menu.MenuItem[] = [
+  {
+    _id: 'welcome',
+    menuName: '首页',
+    menuType: 1,
+    icon: 'DesktopOutlined',
+    path: '/welcome',
+    component: 'views/Welcome/index.tsx',
+    menuState: 1,
+    createTime: '2024-01-01 10:00:00',
+    children:[],
+    buttons:[]
+  },
+  {
+    _id: 'system',
+    menuName: '系统管理',
+    menuType: 1,
+    icon: 'SettingOutlined',
+    path: '/system',
+    component: 'layout/index.tsx',
+    menuState: 1,
+    createTime: '2024-01-01 09:30:00',
+    children: [
+      {
+        _id: 'system-user',
+        parentId: 'system',
+        menuName: '用户管理',
+        menuType: 1,
+        icon: 'UserOutlined',
+        path: '/system/user',
+        component: 'views/system/user/index.tsx',
+        menuState: 1,
+        createTime: '2024-01-01 11:00:00',
+        buttons: [
+          {
+            _id: 'btn-user-add',
+            parentId: 'system-user',
+            menuName: '新增',
+            menuType: 2,
+            menuCode: 'user@add',
+            menuState: 1,
+            createTime: '2024-01-01 11:00:00'
+          },
+          {
+            _id: 'btn-user-edit',
+            parentId: 'system-user',
+            menuName: '编辑',
+            menuType: 2,
+            menuCode: 'user@edit',
+            menuState: 1,
+            createTime: '2024-01-01 11:00:00'
+          },
+          {
+            _id: 'btn-user-delete',
+            parentId: 'system-user',
+            menuName: '删除',
+            menuType: 2,
+            menuCode: 'user@delete',
+            menuState: 1,
+            createTime: '2024-01-01 11:00:00'
+          }
+        ],
+        children:[
+          {
+            _id: 'btn-user-add',
+            parentId: 'system-user',
+            menuName: '新增',
+            menuType: 2,
+            menuCode: 'user@add',
+            menuState: 1,
+            createTime: '2024-01-01 11:00:00'
+          },
+          {
+            _id: 'btn-user-edit',
+            parentId: 'system-user',
+            menuName: '编辑',
+            menuType: 2,
+            menuCode: 'user@edit',
+            menuState: 1,
+            createTime: '2024-01-01 11:00:00'
+          },
+          {
+            _id: 'btn-user-delete',
+            parentId: 'system-user',
+            menuName: '删除',
+            menuType: 2,
+            menuCode: 'user@delete',
+            menuState: 1,
+            createTime: '2024-01-01 11:00:00'
+          }
+        ]
+        
+      },
+      {
+        _id: 'TeamOutlined',
+        parentId: 'system',
+        menuName: '部门管理',
+        menuType: 1,
+        icon: 'icon-dept',
+        path: '/system/department',
+        component: 'views/system/department/index.tsx',
+        menuState: 1,
+        createTime: '2024-01-01 11:30:00',
+        buttons: [
+          {
+            _id: 'btn-dept-add',
+            parentId: 'system-dept',
+            menuName: '新增',
+            menuType: 2,
+            menuCode: 'dept@add',
+            menuState: 1,
+            createTime: '2024-01-01 11:30:00'
+          },
+          {
+            _id: 'btn-dept-edit',
+            parentId: 'system-dept',
+            menuName: '编辑',
+            menuType: 2,
+            menuCode: 'dept@edit',
+            menuState: 1,
+            createTime: '2024-01-01 11:30:00'
+          },
+          {
+            _id: 'btn-dept-delete',
+            parentId: 'system-dept',
+            menuName: '删除',
+            menuType: 2,
+            menuCode: 'dept@delete',
+            menuState: 1,
+            createTime: '2024-01-01 11:30:00'
+          }
+        ],
+        children:[
+          {
+            _id: 'btn-dept-add',
+            parentId: 'system-dept',
+            menuName: '新增',
+            menuType: 2,
+            menuCode: 'dept@add',
+            menuState: 1,
+            createTime: '2024-01-01 11:30:00'
+          },
+          {
+            _id: 'btn-dept-edit',
+            parentId: 'system-dept',
+            menuName: '编辑',
+            menuType: 2,
+            menuCode: 'dept@edit',
+            menuState: 1,
+            createTime: '2024-01-01 11:30:00'
+          },
+          {
+            _id: 'btn-dept-delete',
+            parentId: 'system-dept',
+            menuName: '删除',
+            menuType: 2,
+            menuCode: 'dept@delete',
+            menuState: 1,
+            createTime: '2024-01-01 11:30:00'
+          }
+        ]
+      },
+      {
+        _id: 'system-menu',
+        parentId: 'system',
+        menuName: '菜单管理',
+        menuType: 1,
+        icon: 'icon-menu',
+        path: '/system/menu',
+        component: 'views/system/menu/index.tsx',
+        menuState: 1,
+        createTime: '2024-01-01 15:00:00',
+        buttons: [
+          {
+            _id: 'btn-menu-add',
+            parentId: 'system-menu',
+            menuName: '新增',
+            menuType: 2,
+            menuCode: 'menu@add',
+            menuState: 1,
+            createTime: '2024-01-01 15:00:00'
+          },
+          {
+            _id: 'btn-menu-edit',
+            parentId: 'system-menu',
+            menuName: '编辑',
+            menuType: 2,
+            menuCode: 'menu@edit',
+            menuState: 1,
+            createTime: '2024-01-01 15:00:00'
+          },
+          {
+            _id: 'btn-menu-delete',
+            parentId: 'system-menu',
+            menuName: '删除',
+            menuType: 2,
+            menuCode: 'menu@delete',
+            menuState: 1,
+            createTime: '2024-01-01 15:00:00'
+          }
+        ],
+        children:[
+          {
+            _id: 'btn-menu-add',
+            parentId: 'system-menu',
+            menuName: '新增',
+            menuType: 2,
+            menuCode: 'menu@add',
+            menuState: 1,
+            createTime: '2024-01-01 15:00:00'
+          },
+          {
+            _id: 'btn-menu-edit',
+            parentId: 'system-menu',
+            menuName: '编辑',
+            menuType: 2,
+            menuCode: 'menu@edit',
+            menuState: 1,
+            createTime: '2024-01-01 15:00:00'
+          },
+          {
+            _id: 'btn-menu-delete',
+            parentId: 'system-menu',
+            menuName: '删除',
+            menuType: 2,
+            menuCode: 'menu@delete',
+            menuState: 1,
+            createTime: '2024-01-01 15:00:00'
+          }
+        ]
+      },
+      {
+        _id: 'system-role',
+        parentId: 'system',
+        menuName: '角色管理',
+        menuType: 1,
+        icon: 'icon-role',
+        path: '/system/role',
+        component: 'views/system/role/index.tsx',
+        menuState: 1,
+        createTime: '2024-01-01 14:00:00',
+        buttons: [
+          {
+            _id: 'btn-role-add',
+            parentId: 'system-role',
+            menuName: '新增',
+            menuType: 2,
+            menuCode: 'role@add',
+            menuState: 1,
+            createTime: '2024-01-01 14:00:00'
+          },
+          {
+            _id: 'btn-role-edit',
+            parentId: 'system-role',
+            menuName: '编辑',
+            menuType: 2,
+            menuCode: 'role@edit',
+            menuState: 1,
+            createTime: '2024-01-01 14:00:00'
+          },
+          {
+            _id: 'btn-role-delete',
+            parentId: 'system-role',
+            menuName: '删除',
+            menuType: 2,
+            menuCode: 'role@delete',
+            menuState: 1,
+            createTime: '2024-01-01 14:00:00'
+          },
+          {
+            _id: 'btn-role-perm',
+            parentId: 'system-role',
+            menuName: '权限设置',
+            menuType: 2,
+            menuCode: 'role@perm',
+            menuState: 1,
+            createTime: '2024-01-01 14:00:00'
+          }
+        ],
+        children:[
+          {
+            _id: 'btn-role-add',
+            parentId: 'system-role',
+            menuName: '新增',
+            menuType: 2,
+            menuCode: 'role@add',
+            menuState: 1,
+            createTime: '2024-01-01 14:00:00'
+          },
+          {
+            _id: 'btn-role-edit',
+            parentId: 'system-role',
+            menuName: '编辑',
+            menuType: 2,
+            menuCode: 'role@edit',
+            menuState: 1,
+            createTime: '2024-01-01 14:00:00'
+          },
+          {
+            _id: 'btn-role-delete',
+            parentId: 'system-role',
+            menuName: '删除',
+            menuType: 2,
+            menuCode: 'role@delete',
+            menuState: 1,
+            createTime: '2024-01-01 14:00:00'
+          },
+          {
+            _id: 'btn-role-perm',
+            parentId: 'system-role',
+            menuName: '权限设置',
+            menuType: 2,
+            menuCode: 'role@perm',
+            menuState: 1,
+            createTime: '2024-01-01 14:00:00'
+          }
+        ]
       }
-    }
+    ]
   }
-
-  return menu
-}
-
-// 初始化菜单数据
-const initializeMenus = () => {
-  if (menuDatabase.length === 0) {
-    // 创建5个顶级菜单
-    for (let i = 1; i <= 5; i++) {
-      const menuId = `menu-${uuidv4().slice(0, 8)}`
-      menuDatabase.push(generateRandomMenu(menuId))
-    }
-  }
-}
-
-// 初始化菜单数据
-initializeMenus()
+]
 
 // 工具函数：递归查找菜单
 const findMenuById = (
-  menus: any,
+  menus: Menu.MenuItem[],
   id: string
 ): { menu: Menu.MenuItem; parent: Menu.MenuItem | null; index: number } | null => {
   for (let i = 0; i < menus.length; i++) {
-    if (menus[i]._id === id) {
-      return { menu: menus[i], parent: null, index: i }
+    const menuItem = menus[i]
+    if (menuItem && menuItem._id === id) {
+      return { menu: menuItem, parent: null, index: i }
     }
 
-    if (menus[i].children && menus[i].children.length > 0) {
-      const result = findMenuById(menus[i].children, id)
+    if (menuItem && menuItem.children && menuItem.children.length > 0) {
+      const result = findMenuById(menuItem.children, id)
       if (result) {
-        return { ...result, parent: menus[i] }
+        return { ...result, parent: menuItem }
       }
     }
   }
@@ -512,7 +738,7 @@ export default [
         const newUser = req.body
 
         // 生成新的用户ID（确保唯一）
-        const maxId = userDatabase.reduce((max, user) => Math.max(max, user.userId), 0)
+        const maxId = userDatabase.reduce((max: number, user: { userId: number }) => Math.max(max, user.userId), 0)
         const newUserId = maxId + 1
 
         // 补充必要的用户信息
@@ -552,7 +778,7 @@ export default [
         const userId = updatedUser.userId
 
         // 查找用户在数据库中的索引
-        const userIndex = userDatabase.findIndex(user => user.userId === userId)
+        const userIndex = userDatabase.findIndex((user: { userId: number }) => user.userId === userId)
 
         if (userIndex === -1) {
           return {
@@ -589,7 +815,7 @@ export default [
       try {
         const { ids } = req.body
         // 过滤出不在ids中的用户
-        userDatabase = userDatabase.filter(user => !ids.includes(user.userId))
+        userDatabase = userDatabase.filter((user: { userId: number }) => !ids.includes(user.userId))
         return {
           code: 0,
           data: { ids },
@@ -872,7 +1098,7 @@ export default [
         }
 
         // 更新菜单数据（排除_id和createTime）
-        const { _id, createTime, ...updateFields } = updateData
+        const { _id, ...updateFields } = updateData
         const updatedMenu = { ...result.menu, ...updateFields }
 
         // 处理父菜单变更的情况
@@ -1013,45 +1239,30 @@ export default [
     url: '/mock/user/getPermissionList',
     method: 'get',
     response: () => {
+      const getButtonList = (menus: Menu.MenuItem[]): string[] => {
+        const buttonList: string[] = []
+        const queue: (Menu.MenuItem | undefined)[] = [...menus]
+        while (queue.length > 0) {
+          const menu = queue.shift()
+          if (!menu) continue
+          if (menu.buttons) {
+            menu.buttons.forEach(button => {
+              if (button.menuCode) {
+                buttonList.push(button.menuCode)
+              }
+            })
+          }
+          if (menu.children && menu.children.length > 0) {
+            queue.push(...menu.children)
+          }
+        }
+        return buttonList
+      }
       return {
         code: 0,
         data: {
-          menuList: [
-            {
-              _id: 'menu-1a2b3c4d',
-              menuName: '首页',
-              menuType: 3,
-              menuState: 1,
-              createTime: '2024-05-01 10:00:00',
-              path: '/welcome',
-              component: 'pages/welcome.vue',
-              children: []
-            },
-            {
-              _id: 'menu-5e6f7g8h',
-              menuName: '用户管理',
-              menuType: 1,
-              menuState: 1,
-              createTime: '2024-05-01 11:00:00',
-              icon: 'icon-user',
-              path: '/system/user',
-              component: 'views/system/user/index.vue',
-              children: []
-            }
-            // 更多树形菜单...
-          ],
-          buttonList: [
-            'welcome@query',
-            'user@add',
-            'user@edit',
-            'user@delete',
-            'user@export',
-            'dept@add',
-            'dept@edit',
-            'menu@add',
-            'menu@delete',
-            'dashboard@query'
-          ]
+          menuList: menuDatabase,
+          buttonList: getButtonList(menuDatabase)
         },
         msg: '获取菜单权限成功'
       }

@@ -1,5 +1,7 @@
 // 工具函数
 
+import type { Menu } from "@/types/api"
+
 /**
  * 格式化数字为货币格式
  * @param num 数字或字符串类型的数字
@@ -47,3 +49,12 @@ export const formatState = (state: number) => {
   if (state === 2) return '试用期'
   if (state === 3) return '离职'
 }
+
+
+// 获取菜单权限路径
+export const getMenuPath = (list: Menu.MenuItem[]): string[] => {
+  return list.reduce((result: string[], item: Menu.MenuItem) => {
+    return result.concat(Array.isArray(item.children) && !item.buttons ? getMenuPath(item.children) : item.path + '')
+  }, [])
+}
+
