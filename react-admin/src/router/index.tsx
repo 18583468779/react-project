@@ -9,6 +9,7 @@ import UserList from '@/views/system/user'
 import Department from '@/views/system/department'
 import MenuList from '@/views/system/menu'
 import AuthLoader from './AuthLoader'
+import RoleList from '@/views/system/role'
 
 const routes = [
   {
@@ -43,6 +44,10 @@ const routes = [
       {
         path: '/system/menu',
         element: <MenuList />
+      },
+      {
+        path: '/system/role',
+        element: <RoleList />
       }
     ]
   },

@@ -104,9 +104,9 @@ export namespace Menu {
   // 菜单创建
   export interface CreateParams {
     menuName: string // 菜单名称
-    icon?: string  // 图标
+    icon?: string // 图标
     menuType: number // 菜单类型 1：菜单 2：按钮 3：页面
-    menuState: number   // 1: 正常 2：停用
+    menuState: number // 1: 正常 2：停用
     menuCode?: string // 按钮权限表示
     parentId?: string // 父菜单id
     path?: string // 路由地址
@@ -114,18 +114,47 @@ export namespace Menu {
   }
   // 菜单详情
   export interface MenuItem extends CreateParams {
-      _id: string
-      createTime: string
-      buttons?: MenuItem[] // 按钮列表
-      children: MenuItem[] // 子菜单列表
+    _id: string
+    createTime: string
+    buttons?: MenuItem[] // 按钮列表
+    children: MenuItem[] // 子菜单列表
   }
 
   export interface EditParams extends CreateParams {
     _id?: string
   }
 
-  export interface DeleteParams { 
-    _id:string
+  export interface DeleteParams {
+    _id: string
   }
+}
 
+// 角色管理
+export namespace Role {
+  export interface Params extends PageParams {
+    roleName?: string
+  }
+  export interface CreateParams {
+    roleName: string
+    remark?: string
+  }
+  export interface RoleItem extends CreateParams {
+    _id: string
+    permissionList: {
+      checkedKeys: string[] // 选中的权限
+      halfCheckedKeys: string[] // 半选中的权限
+    }
+    updateTime: string
+    createTime: string
+  }
+  export interface EditParams extends CreateParams {
+    _id: string
+  }
+  export interface Permission {
+    _id: string
+    permissionList: {
+      checkedKeys: string[]
+      halfCheckedKeys: string[]
+    }
+  }
 }

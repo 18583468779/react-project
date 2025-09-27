@@ -3,6 +3,7 @@ import fs from 'fs'
 import path from 'path'
 import { v4 as uuidv4 } from 'uuid'
 import type { Menu } from '@/types/api'
+import { roleMock } from './roleMock'
 
 // 确保上传目录存在
 const uploadDir = path.join(__dirname, 'uploads')
@@ -105,8 +106,6 @@ const generateRandomUser = (id: number) => {
   }
 }
 
-
-
 // 初始化20条用户数据
 const initializeUsers = () => {
   if (userDatabase.length === 0) {
@@ -131,8 +130,8 @@ let menuDatabase: Menu.MenuItem[] = [
     component: 'views/Welcome/index.tsx',
     menuState: 1,
     createTime: '2024-01-01 10:00:00',
-    children:[],
-    buttons:[]
+    children: [],
+    buttons: []
   },
   {
     _id: 'system',
@@ -183,7 +182,7 @@ let menuDatabase: Menu.MenuItem[] = [
             createTime: '2024-01-01 11:00:00'
           }
         ],
-        children:[
+        children: [
           {
             _id: 'btn-user-add',
             parentId: 'system-user',
@@ -212,7 +211,6 @@ let menuDatabase: Menu.MenuItem[] = [
             createTime: '2024-01-01 11:00:00'
           }
         ]
-        
       },
       {
         _id: 'TeamOutlined',
@@ -253,7 +251,7 @@ let menuDatabase: Menu.MenuItem[] = [
             createTime: '2024-01-01 11:30:00'
           }
         ],
-        children:[
+        children: [
           {
             _id: 'btn-dept-add',
             parentId: 'system-dept',
@@ -322,7 +320,7 @@ let menuDatabase: Menu.MenuItem[] = [
             createTime: '2024-01-01 15:00:00'
           }
         ],
-        children:[
+        children: [
           {
             _id: 'btn-menu-add',
             parentId: 'system-menu',
@@ -400,7 +398,7 @@ let menuDatabase: Menu.MenuItem[] = [
             createTime: '2024-01-01 14:00:00'
           }
         ],
-        children:[
+        children: [
           {
             _id: 'btn-role-add',
             parentId: 'system-role',
@@ -463,7 +461,6 @@ const findMenuById = (
   }
   return null
 }
-
 export default [
   {
     url: '/mock/test',
@@ -1267,10 +1264,16 @@ export default [
         msg: '获取菜单权限成功'
       }
     }
-  }
+  },
+  ...roleMock
 ] as MockMethod[]
 
 // 用于生产环境的 Mock 服务器设置
 export function setupProdMockServer() {
   // 生产环境 Mock 服务器设置
 }
+
+// export default [
+//   ...现有其他接口,
+//   ...roleMock
+// ] as MockMethod[]
