@@ -1,10 +1,11 @@
-import { createUser, updateUser } from '@/api/api'
-import type { User } from '@/types/api'
+import { createUser, getDeptList, updateUser } from '@/api/api'
+import { getAllRoleList } from '@/api/roleApi'
+import type { Dept, Role, User } from '@/types/api'
 import { IActionData, type IAction, type IModalProp } from '@/types/modal'
 import { message } from '@/utils/antdGlobal'
 import { getItem } from '@/utils/storage'
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons'
-import { Form, Input, Modal, Select, Upload } from 'antd'
+import { Form, Input, Modal, Select, TreeSelect, Upload } from 'antd'
 import type { RcFile, UploadChangeParam, UploadFile, UploadProps } from 'antd/es/upload'
 import * as React from 'react'
 import { useState } from 'react'
@@ -15,12 +16,30 @@ export const CreateUser: React.FC<IModalProp<User.UserItem>> = props => {
   const [loading, setLoading] = useState(false)
   const [visible, setVisible] = useState(false)
   const [action, setAction] = useState<IAction>('create')
+  const [deptList, setDeptList] = useState<Dept.DeptItem[]>([]) // 部门列表
+  const [allRoleList, setAllRoleList] = useState<Role.RoleItem[]>([]) // 所有的角色列表
+
   // 暴露子组件open方法
   React.useImperativeHandle(props.mRef, () => {
     return {
       open
     }
   })
+  React.useEffect(() => {
+    handleDeptList()
+    handleAllRoleList()
+  }, [])
+
+  const handleDeptList = async () => {
+    const res = await getDeptList()
+    setDeptList(res.list)
+  }
+
+  const handleAllRoleList = async () => {
+    const res = await getAllRoleList()
+    setAllRoleList(res)
+  }
+
   //调用弹框显示方法
   const open = (type: IAction, data?: User.UserItem) => {
     setAction(type)
@@ -116,20 +135,25 @@ export const CreateUser: React.FC<IModalProp<User.UserItem>> = props => {
           <Input type='number' placeholder='请输入手机号' />
         </Form.Item>
         <Form.Item name='deptId' label='部门' rules={[{ required: true, message: '请选择部门' }]}>
-          <Select style={{ width: 120 }} placeholder='请选择部门'>
-            <Select.Option value={0}>所有</Select.Option>
-            <Select.Option value={1}>部门1</Select.Option>
-            <Select.Option value={2}>部门2</Select.Option>
-            <Select.Option value={3}>部门3</Select.Option>
-          </Select>
+          <TreeSelect
+            placeholder='请选择部门'
+            allowClear
+            treeDefaultExpandAll
+            showCheckedStrategy={TreeSelect.SHOW_ALL}
+            fieldNames={{ label: 'deptName', value: '_id' }}
+            treeData={deptList}
+          />
         </Form.Item>
 
-        <Form.Item name='role' label='角色' rules={[{ required: true, message: '请选择角色' }]}>
-          <Select style={{ width: 120 }} placeholder='请选择角色'>
-            <Select.Option value={0}>所有</Select.Option>
-            <Select.Option value={1}>管理员</Select.Option>
-            <Select.Option value={2}>体验管理员</Select.Option>
-            <Select.Option value={3}>普通用户</Select.Option>
+        <Form.Item label='系统角色' name='roleList'>
+          <Select placeholder='请选择角色'>
+            {allRoleList.map(item => {
+              return (
+                <Select.Option value={item._id} key={item._id}>
+                  {item.roleName}
+                </Select.Option>
+              )
+            })}
           </Select>
         </Form.Item>
         <Form.Item name='job' label='岗位'>
