@@ -1,6 +1,6 @@
 // 工具函数
 
-import type { Menu } from "@/types/api"
+import type { Menu } from '@/types/api'
 
 /**
  * 格式化数字为货币格式
@@ -50,7 +50,6 @@ export const formatState = (state: number) => {
   if (state === 3) return '离职'
 }
 
-
 // 获取菜单权限路径
 export const getMenuPath = (list: Menu.MenuItem[]): string[] => {
   return list.reduce((result: string[], item: Menu.MenuItem) => {
@@ -58,3 +57,14 @@ export const getMenuPath = (list: Menu.MenuItem[]): string[] => {
   }, [])
 }
 
+// 递归获取路由对象
+export const searchRoute: any = (path: string, routes: any = []) => {
+  for (const item of routes) {
+    if (item.path === path) return item
+    if (item.children) {
+      const result = searchRoute(path, item.children)
+      if (result) return result
+    }
+  }
+  return ''
+}
