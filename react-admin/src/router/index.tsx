@@ -11,7 +11,7 @@ import MenuList from '@/views/system/menu'
 import AuthLoader from './AuthLoader'
 import RoleList from '@/views/system/role'
 
-const routes = [
+export const routes = [
   {
     path: '/',
     element: <Navigate to='/welcome' />

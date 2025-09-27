@@ -9,7 +9,7 @@ import styles from './index.module.less'
 import { userInfo } from '@/api/api'
 import { userStore } from '@/store'
 import type { IAuthLoader } from '@/router/AuthLoader'
-import { router } from '@/router'
+import { routes } from '@/router'
 import { searchRoute } from '@/utils'
 const App: React.FC = () => {
   const state = userStore()
@@ -25,7 +25,7 @@ const App: React.FC = () => {
 
   // 权限判断
   const data = useRouteLoaderData('layout') as IAuthLoader
-  const route = searchRoute(pathname, router)
+  const route = searchRoute(pathname, routes)
   if (route && route.meta?.auth === false) {
     // 继续执行
   } else {

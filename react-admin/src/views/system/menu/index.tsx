@@ -6,6 +6,7 @@ import type { ColumnsType } from 'antd/es/table'
 import { useEffect, useRef, useState, type FunctionComponent } from 'react'
 import { IActionData, type IAction } from '@/types/modal'
 import CreateMenu from './CreateMenu'
+import AuthButton from '@/components/AuthButton'
 
 interface Props {}
 
@@ -28,7 +29,7 @@ const MenuList: FunctionComponent<Props> = () => {
   }
 
   const handleCreate = () => {
-    createMenuRef.current.open(IActionData.Create,{ orderBy: menuList.length} )
+    createMenuRef.current.open(IActionData.Create, { orderBy: menuList.length })
   }
 
   const handleSubCreate = (id: string) => {
@@ -36,7 +37,7 @@ const MenuList: FunctionComponent<Props> = () => {
   }
 
   const handleEdit = (record: Menu.MenuItem) => {
-    createMenuRef.current.open(IActionData.Update, { ...record,  })
+    createMenuRef.current.open(IActionData.Update, { ...record })
   }
 
   const handleDelete = async (_id: string) => {
@@ -104,7 +105,7 @@ const MenuList: FunctionComponent<Props> = () => {
             <Button type='text' onClick={() => handleEdit(record)}>
               编辑
             </Button>
-            <Popconfirm title='确定删除吗？' onConfirm={() => handleDelete(record._id)} okText="确认" cancelText="取消">
+            <Popconfirm title='确定删除吗？' onConfirm={() => handleDelete(record._id)} okText='确认' cancelText='取消'>
               <Button type='text' danger>
                 删除
               </Button>
@@ -142,9 +143,9 @@ const MenuList: FunctionComponent<Props> = () => {
         <div className='header-wrapper'>
           <div className='title'>菜单列表</div>
           <div className='action'>
-            <Button type='primary' onClick={handleCreate}>
+            <AuthButton auth='menu@add' type='primary' onClick={handleCreate}>
               新增
-            </Button>
+            </AuthButton>
           </div>
         </div>
         <Table bordered rowKey='_id' columns={colmuns} dataSource={menuList} pagination={false} />
