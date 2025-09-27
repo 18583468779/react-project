@@ -7,12 +7,16 @@ import type { ColumnsType } from 'antd/es/table'
 import { useRef, type FunctionComponent } from 'react'
 import CreateRole from './CreateRole'
 import { IActionData, type IAction, type IModalProp } from '@/types/modal'
+import CreatePermission from './CreatePermission'
 
 interface RoleListProps {}
 
 const RoleList: FunctionComponent<RoleListProps> = () => {
   const [form] = Form.useForm()
   const roleRef = useRef<{
+    open: (type: IAction, data?: Role.RoleItem) => void
+  }>({ open: () => {} })
+  const permissionRef = useRef<{
     open: (type: IAction, data?: Role.RoleItem) => void
   }>({ open: () => {} })
 
@@ -42,7 +46,9 @@ const RoleList: FunctionComponent<RoleListProps> = () => {
   const handleEdit = (record: Role.RoleItem) => {
     roleRef.current.open(IActionData.Update, record)
   }
-
+  const handlePermission = (record: Role.RoleItem) => {
+    permissionRef.current.open(IActionData.Create, record)
+  }
   const columns: ColumnsType<Role.RoleItem> = [
     {
       title: '角色名称',
@@ -73,7 +79,9 @@ const RoleList: FunctionComponent<RoleListProps> = () => {
             <Button type='text' onClick={() => handleEdit(record)}>
               编辑
             </Button>
-            <Button type='text'>设置权限</Button>
+            <Button type='text' onClick={() => handlePermission(record)}>
+              设置权限
+            </Button>
             <Popconfirm okText='删除' cancelText='取消' title='确认删除吗？' onConfirm={() => handleDelete(record._id)}>
               <Button type='text' danger>
                 删除
@@ -121,6 +129,12 @@ const RoleList: FunctionComponent<RoleListProps> = () => {
         }}
       />
       {/* 设置权限 */}
+      <CreatePermission
+        mRef={permissionRef}
+        update={() => {
+          search.submit()
+        }}
+      />
     </div>
   )
 }

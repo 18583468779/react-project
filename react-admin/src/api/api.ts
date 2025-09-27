@@ -63,7 +63,7 @@ export const getDeptList = (params?: Dept.params) => {
 
 // 菜单管理
 export const getMenuList = (params?: Menu.Params) => {
-  return request.post<Menu.MenuItem[]>('/menu/list', params)
+  return request.post<ResultData<Menu.MenuItem>>('/menu/list', params)
 }
 
 // 创建菜单
